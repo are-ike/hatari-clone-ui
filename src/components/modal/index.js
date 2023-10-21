@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 
 const Modal = ({ open, setOpen, children, header }) => {
   const underlay = useRef();
-
+const me = 'i'
   return (
     open && (
       <div
