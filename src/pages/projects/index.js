@@ -38,7 +38,7 @@ const Projects = () => {
         <div>{row.name}</div>
         <div>{row.createdAt}</div>
         <div className="flex gap-2">
-          <button>
+          <button onClick={() => setOpenAddModal(true)}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -84,7 +84,6 @@ const Projects = () => {
         <DeleteModal
           open={openDeleteModal}
           setOpen={setOpenDeleteModal}
-          header={"Delete Project"}
           text={`You're about to permanently delete this project`}
         />
 
@@ -96,7 +95,7 @@ const Projects = () => {
         </div>
 
         <div className="bg-backg py-8 h-[calc(100vh-142px)] overflow-y-auto">
-          {rows.length ? (
+          {!rows.length ? (
             <EmptyContainer
               text={
                 "You haven’t created any projects yet. When you do, it’ll show up here."

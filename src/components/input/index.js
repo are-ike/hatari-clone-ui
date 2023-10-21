@@ -6,7 +6,7 @@ const Input = ({ value, setValue, placeholder }) => {
       value={value}
       onChange={(e) => setValue(e.target.value)}
       placeholder={placeholder}
-      className=" outline-none p-4"
+      className="border-none bg-backg px-4 h-12 outline-none p-4 w-full"
     />
   );
 };
