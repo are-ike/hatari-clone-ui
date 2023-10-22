@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -20,15 +20,29 @@ const nodeTypes = {
 };
 
 const Workflow = () => {
-  const selectedNodeCard = useRef();
+  const [draggableCard, setDraggableCard] = useState({
+    isDragging: false,
+    isDropped: false,
+    type: null,
+  });
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
+    (params) => {
+      const sourceNode = nodes.filter((node) => node.id === params.source)[0]
+        ?.type;
+      const targetNode = nodes.filter((node) => node.id === params.target)[0]
+        ?.type;
 
-    [setEdges]
+      if (sourceNode === "inputNode" && targetNode === "action")
+        return alert("non");
+
+      return setEdges((eds) => addEdge(params, eds));
+    },
+
+    [setEdges, nodes]
   );
 
   const createNode = (e, type) => {
@@ -37,14 +51,13 @@ const Workflow = () => {
       position: { x: e.pageX - 130, y: e.pageY - 130 },
       data: {
         label: "Untitled",
-        updateNodeLabel: updateNodeLabel(`${nodes.length + 1}`),
       },
       type,
     };
   };
 
   const onDrop = (e) => {
-    const newNode = createNode(e, selectedNodeCard.current);
+    const newNode = createNode(e, draggableCard.type);
 
     setNodes((nodes) => {
       const newNodes = JSON.parse(JSON.stringify(nodes));
@@ -53,7 +66,11 @@ const Workflow = () => {
       return newNodes;
     });
 
-    selectedNodeCard.current = null
+    setDraggableCard({
+      isDragging: false,
+      isDropped: false,
+      type: null,
+    });
   };
 
   const updateNodeLabel = (nodeId) => (label) => {
@@ -70,16 +87,17 @@ const Workflow = () => {
 
   return (
     <div>
-      <WorkflowHeader
-        selectedNodeCardRef={selectedNodeCard}
-        nodes={nodes}
-      />
+      <WorkflowHeader setDraggableCardState={setDraggableCard} nodes={nodes} />
 
       <div
         style={{ width: "100vw", height: "100vh" }}
         className="bg-[#F6F6F8]"
         onDrop={onDrop}
-        onDragOver={(e) => e.preventDefault()}
+        onDragOver={(e) => {
+          if (draggableCard.isDragging) {
+            e.preventDefault();
+          }
+        }}
       >
         <ReactFlow
           nodeTypes={nodeTypes}

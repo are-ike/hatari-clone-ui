@@ -6,6 +6,7 @@ import { cls } from "../../utils/functions";
 
 const Node = ({ type, data }) => {
   const isInput = type === nodeTypes.input;
+  const isAction = type === nodeTypes.action;
   //const labelContainer = useRef();
   //const [showInput, setShowInput] = useState(false);
 
@@ -89,7 +90,7 @@ const Node = ({ type, data }) => {
           {/* )} */}
         </div>
       </div>
-      <Handle type="source" position={Position.Right} />
+      {!isAction && <Handle type="source" position={Position.Right} />}
     </>
   );
 };

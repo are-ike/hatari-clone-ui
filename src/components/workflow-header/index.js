@@ -3,14 +3,36 @@ import DraggableCard from "../draggable-card";
 import { nodeTypes } from "../../constants";
 import PrimaryButton from "../button/primary-button";
 
-const WorkflowHeader = ({ selectedNodeCardRef, nodes }) => {
-  const onDragStart = (type) => {
-    selectedNodeCardRef.current = type;
+const WorkflowHeader = ({
+  nodes,
+  setDraggableCardState,
+}) => {
+  const onDragEnd =  (e) => {
+    if (e.pageX > 120) {
+      setDraggableCardState((state) => ({
+        ...state,
+        isDragging: false,
+        isDropped: true,
+      }));
+    } else {
+      setDraggableCardState({
+        isDragging: false,
+        isDropped: false,
+        type: null,
+      });
+    }
   };
 
-  const doesNodeExist = (type) => 
-    !!nodes.filter(node => node.type === type).length
-  
+  const onDragStart = (type) => () => {
+    setDraggableCardState((state) => ({
+      ...state,
+      isDragging: true,
+      type: type,
+    }));
+  };
+
+  const doesNodeExist = (type) =>
+    !!nodes.filter((node) => node.type === type).length;
 
   return (
     <div className="flex items-center py-4 px-12 justify-between">
@@ -21,21 +43,25 @@ const WorkflowHeader = ({ selectedNodeCardRef, nodes }) => {
           <DraggableCard
             type={nodeTypes.input}
             disabled={doesNodeExist("inputNode")}
-            onDragStart={() => onDragStart("inputNode")} //not using the 'input' constant here because type of input is alredy defined in react flow and clashes with my custom type
+            onDragEnd={onDragEnd}
+            onDragStart={onDragStart("inputNode")} 
+             //not using the 'input' constant here because type of input is alredy defined in react flow and clashes with my custom type
           >
             Input Node
           </DraggableCard>
           <DraggableCard
             type={nodeTypes.rule}
             disabled={doesNodeExist(nodeTypes.rule)}
-            onDragStart={() => onDragStart(nodeTypes.rule)}
+            onDragEnd={onDragEnd}
+            onDragStart={onDragStart(nodeTypes.rule)}
           >
             Rule Node
           </DraggableCard>
           <DraggableCard
             type={nodeTypes.action}
             disabled={doesNodeExist(nodeTypes.action)}
-            onDragStart={() => onDragStart(nodeTypes.action)}
+            onDragEnd={onDragEnd}
+            onDragStart={onDragStart(nodeTypes.action)}
           >
             Action Node
           </DraggableCard>
