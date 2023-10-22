@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 const Workflows = () => {
-    return (
-        <div>
-            hi
-        </div>
-    );
+  return (
+    <div>
+      
+    </div>
+  );
 };
 
 export default Workflows;

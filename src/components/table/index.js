@@ -3,17 +3,25 @@ import { cls } from "../../utils/functions";
 
 const Table = ({ columns, rows, renderRows, className }) => {
   return (
-    <div className={cls("flex flex-col", className)}>
-      <div className="flex justify-between bg-backg p-4 rounded-t-lg">
-        {columns.map((col) => (
-          <div className="capitalize text-darkblue">{col}</div>
+    <table className={cls("w-full", className)}>
+      <tr className="bg-backg">
+        {columns.map((col, i) => (
+          <th
+            className={cls(
+              "capitalize p-4 text-left text-darkblue font-normal",
+              i === 0 && "rounded-tl-lg",
+              i === columns.length - 1 && "rounded-tr-lg"
+            )}
+          >
+            {col}
+          </th>
         ))}
-      </div>
+      </tr>
 
       {rows.map((row) => (
-        <div className="flex justify-between p-4 border-b text-body">{renderRows(row)}</div>
+        <tr className="border-b text-body">{renderRows(row)}</tr>
       ))}
-    </div>
+    </table>
   );
 };
 

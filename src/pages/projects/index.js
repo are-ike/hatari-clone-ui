@@ -5,6 +5,8 @@ import AddProjectModal from "../../components/modal/add-project-modal";
 import DeleteModal from "../../components/modal/delete-modal";
 import PrimaryButton from "../../components/button/primary-button";
 import EmptyContainer from "../../components/empty-container";
+import { format } from "date-fns";
+import ReactPaginate from "react-paginate";
 
 const girl = false;
 const columns = ["project name", "created at", "actions"];
@@ -14,7 +16,7 @@ const rows = [
     createdAt: "55555",
   },
   {
-    name: "Ikeffooooooooooooo",
+    name: "Ikeffoooooooooooo",
     createdAt: "55555",
   },
   {
@@ -35,9 +37,13 @@ const Projects = () => {
   const renderRows = (row) => {
     return (
       <>
-        <div>{row.name}</div>
-        <div>{row.createdAt}</div>
-        <div className="flex gap-2">
+        <td className="p-4" title={row.name}>
+          {/* <span className="truncate max-w-[200px] inline-block "> */}
+          {row.name}
+          {/* </span> */}
+        </td>
+        <td className="p-4">{format(new Date(2014, 1, 11), "dd-MM-yyyy")}</td>
+        <td className="flex gap-2 p-4">
           <button onClick={() => setOpenAddModal(true)}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +76,7 @@ const Projects = () => {
               />
             </svg>
           </button>
-        </div>
+        </td>
       </>
     );
   };
@@ -104,17 +110,33 @@ const Projects = () => {
               onClick={() => setOpenAddModal(true)}
             />
           ) : (
-            <div className="max-w-page mx-auto py-6 px-10 bg-white rounded-lg">
-              <SearchBar
-                placeholder={"Search projects"}
-                query={query}
-                setQuery={setQuery}
-              />
-              <Table
-                columns={columns}
-                rows={rows}
-                renderRows={renderRows}
-                className="mt-4"
+            <div className="max-w-page mx-auto">
+              <div className="py-6 px-10 bg-white rounded-lg">
+                <SearchBar
+                  placeholder={"Search projects"}
+                  query={query}
+                  setQuery={setQuery}
+                />
+                <Table
+                  columns={columns}
+                  rows={rows}
+                  renderRows={renderRows}
+                  className="mt-4"
+                />
+              </div>
+
+              <ReactPaginate
+                className="flex p-2 bg-white w-fit rounded mt-4 ml-auto items-center"
+                pageLinkClassName="h-8 w-8 text-body flex items-center justify-center hover:bg-primary hover:text-white rounded"
+                nextLabel={"Next >"}
+                onPageChange={(e) => console.log(e.selected)}
+                pageRangeDisplayed={5}
+                pageCount={5}
+                previousLabel={"< Previous"}
+                previousLinkClassName="mr-2"
+                nextLinkClassName="ml-2"
+                disabledLinkClassName="text-darkgrey cursor-not-allowed"
+                activeLinkClassName="bg-primary text-white"
               />
             </div>
           )}

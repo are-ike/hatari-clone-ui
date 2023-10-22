@@ -7,7 +7,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import Projects from "./pages/projects";
-import Workflows from "./pages/workflows";
+import Workflow from "./pages/workflow";
 import PageNotFound from "./pages/page-not-found";
 
 function App() {
@@ -23,7 +23,7 @@ function App() {
             <Projects />
           </Route>
           <Route exact path="/workflows">
-            <Workflows />
+            <Workflow />
           </Route>
           <Route path="*">
             <PageNotFound/>
