@@ -13,7 +13,7 @@ const Modal = ({ open, setOpen, children, header, className }) => {
         }
       }}
       className={cls(
-        "duration-200  bg-darkblue bg-opacity-20 h-screen w-screen flex items-center justify-center fixed inset-0",
+        "duration-200 z-[100] bg-darkblue bg-opacity-20 h-screen w-screen flex items-center justify-center fixed inset-0",
         !open && "opacity-0 pointer-events-none", 
       )}
     >

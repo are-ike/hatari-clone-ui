@@ -12,6 +12,8 @@ import ActionNode from "../../components/nodes/action-node";
 import InputNode from "../../components/nodes/input-node";
 import RuleNode from "../../components/nodes/rule-node";
 import WorkflowHeader from "../../components/workflow-header";
+import RuleNodeModal from "../../components/modal/rule-node-modal";
+import { nodeTypes as nodeValues , ruleRow} from "../../constants";
 
 const nodeTypes = {
   action: ActionNode,
@@ -25,6 +27,8 @@ const Workflow = () => {
     isDropped: false,
     type: null,
   });
+  const [openRuleNode, setOpenRuleNode] = useState(false);
+  const [openActionNode, setOpenActionNode] = useState(false);
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -36,7 +40,7 @@ const Workflow = () => {
       const targetNode = nodes.filter((node) => node.id === params.target)[0]
         ?.type;
 
-      if (sourceNode === "inputNode" && targetNode === "action")
+      if (sourceNode === "inputNode" && targetNode === nodeValues.action)
         return alert("non");
 
       return setEdges((eds) => addEdge(params, eds));
@@ -45,22 +49,34 @@ const Workflow = () => {
     [setEdges, nodes]
   );
 
+  const getNewNodesArray = (nodes) => {
+    return nodes.map(node => ({...node, data: {...node.data}}))
+  }
+
   const createNode = (e, type) => {
-    return {
+    const node = {
       id: `${nodes.length + 1}`,
       position: { x: e.pageX - 130, y: e.pageY - 130 },
       data: {
         label: "Untitled",
+        open: type === nodeValues.rule ? openRuleNode : openActionNode,
+        setOpen: type === nodeValues.rule ? setOpenRuleNode : setOpenActionNode,
       },
       type,
     };
+
+    if(type === nodeValues.rule){
+        node.data.rules = [{...ruleRow}]
+    }
+
+    return node
   };
 
   const onDrop = (e) => {
     const newNode = createNode(e, draggableCard.type);
 
     setNodes((nodes) => {
-      const newNodes = JSON.parse(JSON.stringify(nodes));
+      const newNodes = getNewNodesArray(nodes);
       newNodes.push(newNode);
 
       return newNodes;
@@ -73,20 +89,33 @@ const Workflow = () => {
     });
   };
 
-  const updateNodeLabel = (nodeId) => (label) => {
-    setNodes((nodes) =>
-      nodes.map((node) => {
-        if (nodeId === node.id) {
-          node.data.label = label;
-        }
+  const updateRuleNode = ({ label, rules }) => {
+    setNodes((nodes) => {
+      const newNodes = getNewNodesArray(nodes);
+      const ruleNode = newNodes.filter(
+        (node) => node.type === nodeValues.rule
+      )[0];
+      if (label) {
+        ruleNode.data.label = label;
+      }
+      if (rules) {
+        ruleNode.data.rules = rules;
+      }
 
-        return { ...node, data: { ...node.data } };
-      })
-    );
+      return newNodes;
+    });
   };
 
   return (
     <div>
+      <RuleNodeModal
+        open={openRuleNode}
+        setOpen={setOpenRuleNode}
+        ruleNode={
+          nodes.filter((node) => node.type === nodeValues.rule)[0]?.data ?? null
+        }
+        updateRuleNode={updateRuleNode}
+      />
       <WorkflowHeader setDraggableCardState={setDraggableCard} nodes={nodes} />
 
       <div
