@@ -11,7 +11,9 @@ module.exports = {
         body:'#4A4A68',
         primary: '#1343C7',
         del: '#F23577',
-        darkgrey: '#AFAFB9'
+        darkgrey: '#AFAFB9',
+        btnHover: '#002FB3',
+        btnDisabled: '#6282DA'
       },
       maxWidth: {
         'page': '1200px',

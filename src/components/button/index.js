@@ -1,11 +1,12 @@
 import React from "react";
 import { cls } from "../../utils/functions";
 
-const Button = ({ children, onClick, className }) => {
+const Button = ({ children, onClick, className, disabled }) => {
   return (
     <button
       onClick={onClick}
-      className={cls("h-12 px-6 font-medium rounded", className)}
+      disabled={disabled}
+      className={cls("h-12 px-6 font-medium rounded duration-300", className)}
     >
       {children}
     </button>

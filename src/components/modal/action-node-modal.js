@@ -22,6 +22,15 @@ const ActionNodeModal = ({ actionNode, open, setOpen, updateActionNode }) => {
     actionNode ? (actionNode.isCustom ? actionNode.action : "") : ""
   );
 
+  const isValid = (isCustom && !!customValue) || (!isCustom && !!action);
+  const isDirty = () => {
+    if (label !== actionNode?.label) return true;
+    if (isCustom !== actionNode?.isCustom) return true;
+
+    if (isCustom) return customValue !== actionNode?.action;
+    if (!isCustom) return action !== actionNode?.action;
+  };
+
   useEffect(() => {
     if (!actionNode) return;
 
@@ -40,13 +49,13 @@ const ActionNodeModal = ({ actionNode, open, setOpen, updateActionNode }) => {
     }
   };
 
-  const onSave = () => {
+  const onApply = () => {
     updateActionNode({
       label,
       action: isCustom ? customValue : action,
       isCustom,
     });
-    setOpen(false)
+    setOpen(false);
   };
 
   return (
@@ -82,7 +91,9 @@ const ActionNodeModal = ({ actionNode, open, setOpen, updateActionNode }) => {
       </div>
 
       <div className="flex gap-4 mt-14 w-fit ml-auto">
-        <PrimaryButton onClick={onSave}>Save</PrimaryButton>
+        <PrimaryButton onClick={onApply} disabled={!(isDirty() && isValid)}>
+          Apply
+        </PrimaryButton>
       </div>
     </NodeModal>
   );

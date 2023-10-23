@@ -6,6 +6,7 @@ import PrimaryButton from "../button/primary-button";
 const WorkflowHeader = ({
   nodes,
   setDraggableCardState,
+  onSave
 }) => {
   const onDragEnd =  (e) => {
     if (e.pageX > 120) {
@@ -103,7 +104,7 @@ const WorkflowHeader = ({
           </button>
         </div>
 
-        <PrimaryButton className={"px-3 h-8 text-sm"}>Save</PrimaryButton>
+        <PrimaryButton className={"px-3 h-8 text-sm"} onClick={onSave}>Save</PrimaryButton>
       </div>
     </div>
   );

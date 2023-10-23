@@ -72,7 +72,7 @@ const Workflow = () => {
     }
 
     if (type === nodeValues.action) {
-      node.data.action = '';
+      node.data.action = "";
       node.data.isCustom = false;
     }
 
@@ -125,6 +125,12 @@ const Workflow = () => {
     });
   };
 
+  const onSave = () => {
+    const payload = {
+      nodes: JSON.parse(JSON.stringify(nodes)),
+      edges,
+    };
+  };
   return (
     <div>
       <RuleNodeModal
@@ -144,7 +150,11 @@ const Workflow = () => {
         }
         updateActionNode={updateActionNode}
       />
-      <WorkflowHeader setDraggableCardState={setDraggableCard} nodes={nodes} />
+      <WorkflowHeader
+        setDraggableCardState={setDraggableCard}
+        nodes={nodes}
+        onSave={onSave}
+      />
 
       <div
         style={{ width: "100vw", height: "100vh" }}

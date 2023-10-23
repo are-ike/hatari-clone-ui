@@ -8,7 +8,7 @@ const NodeModal = ({ open, setOpen, children, header }) => {
       <div
         className={cls(
           open ? "bottom-[5vh]" : "bottom-[-100vh]",
-          "absolute duration-300 bg-white rounded-xl w-[95%] p-6 "
+          "absolute duration-300 bg-white rounded-xl w-[98%] p-6 "
         )}
       >
         <div className="flex justify-between items-center mb-4">
