@@ -5,6 +5,7 @@ import RuleRow from "../rule-row";
 import SecondaryButton from "../button/secondary-button";
 import PrimaryButton from "../button/primary-button";
 import { conditions, ruleRow } from "../../constants";
+import NodeModal from "./node-modal";
 
 const newRow = () => ({
   ...ruleRow,
@@ -14,16 +15,17 @@ const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
   const [rows, setRows] = useState(ruleNode ? ruleNode.rules : []);
   const [label, setLabel] = useState(ruleNode ? ruleNode.label : "");
 
-  const addNewRow = () => {
-    setRows((rows) => {
-      const newRows = rows.map((row, idx) => ({
-        ...row,
-        condition: idx === rows.length - 1 ? conditions.AND : row.condition,
-      }));
-      newRows.push(newRow());
+  const addNewRow = (idx) => {
+    const newRows = JSON.parse(JSON.stringify(rows));
+    newRows.splice(idx + 1, 0, newRow());
 
-      return newRows;
-    });
+    if ((idx === 0 && !rows[idx].condition) || idx === rows.length - 1) {
+      newRows[idx].condition = conditions.AND;
+    } else {
+      newRows[idx + 1].condition = conditions.AND;
+    }
+
+    setRows(newRows);
   };
 
   useEffect(() => {
@@ -56,33 +58,24 @@ const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
     setOpen(false);
   };
 
-  const updateRow = (idx) => ({key, value})=>{
-    const newRows = JSON.parse(JSON.stringify(rows));
-    const row = newRows[idx]
-    row[key] = value
+  const updateRow =
+    (idx) =>
+    ({ key, value }) => {
+      const newRows = JSON.parse(JSON.stringify(rows));
+      const row = newRows[idx];
+      row[key] = value;
 
-    setRows(newRows)
-  }
+      setRows(newRows);
+    };
 
   return (
-    <Modal
-      open={open}
-      setOpen={setOpen}
-      className={"!w-[60%] p-6"}
-      header={"Rule Editor"}
-    >
-      <div className="flex items-center justify-between mb-8">
+    <NodeModal open={open} setOpen={setOpen} header={"Rule Editor"}>
+      <div className="flex items-center gap-2 mb-8">
+        <p>Rule Name: </p>
         <EditViewName value={label} onSave={setLabel} />
-        <PrimaryButton
-          className={
-            "text-xs h-8 !px-4 border border-primary bg-white text-primary"
-          }
-          onClick={addNewRow}
-        >
-          Add Row
-        </PrimaryButton>
       </div>
-      <div className="flex flex-col gap-4 overflow-auto h-[200px]">
+      <p className="font-medium mb-2">If statement</p>
+      <div className="flex flex-col gap-4 overflow-auto h-[250px] border p-4 rounded">
         {rows.map((row, idx) => (
           <RuleRow
             key={"rule-row" + idx}
@@ -93,6 +86,7 @@ const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
             onDelete={() => onDelete(idx)}
             canDelete={idx > 0}
             updateRow={updateRow(idx)}
+            addRow={() => addNewRow(idx)}
           />
         ))}
       </div>
@@ -101,7 +95,7 @@ const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
         <SecondaryButton onClick={onReset}>Reset</SecondaryButton>
         <PrimaryButton onClick={onSave}>Save</PrimaryButton>
       </div>
-    </Modal>
+    </NodeModal>
   );
 };
 

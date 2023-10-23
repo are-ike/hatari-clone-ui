@@ -12,7 +12,7 @@ const EditViewName = ({ value, onSave }) => {
     <div>
       {!isEditing ? (
         <div className="flex items-center gap-2">
-          <p className="max-w-[300px] h-[42px] flex items-center truncate">
+          <p className="max-w-[300px] h-[42px] text-[17px] font-medium flex items-center truncate">
             {currentValue}
           </p>
           <button onClick={() => setIsEditing(true)}>

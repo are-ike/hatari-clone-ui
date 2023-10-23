@@ -16,21 +16,22 @@ const Dropdown = ({ value, options, setValue, placeholder }) => {
           border: "none",
           outline: "none",
           padding: "0 16px",
-          width: '100%'
         }),
         dropdownIndicator: (base) => ({ ...base, color: "#0E0E2C" }),
-        option: base => ({
-            ...base,
-            cursor: "pointer",
-            fontSize: "14px",
-            fontWeight: 500,
-            lineHeight: "16px",
-            color: '#4A4A68',
-            display: "flex",
-            alignItems: "center",
-            background: "transparent",
-            padding: "15px 16px",
-          }),indicatorSeparator: () => ({ display: "none" }),
+        option: (base) => ({
+          ...base,
+          cursor: "pointer",
+          fontSize: "14px",
+          fontWeight: 500,
+          lineHeight: "16px",
+          color: "#4A4A68",
+          display: "flex",
+          alignItems: "center",
+          background: "transparent",
+          padding: "15px 16px",
+        }),
+        indicatorSeparator: () => ({ display: "none" }),
+        container: (base) => ({ ...base, width: "100%" }),
       }}
     />
   );

@@ -13,7 +13,9 @@ import InputNode from "../../components/nodes/input-node";
 import RuleNode from "../../components/nodes/rule-node";
 import WorkflowHeader from "../../components/workflow-header";
 import RuleNodeModal from "../../components/modal/rule-node-modal";
-import { nodeTypes as nodeValues , ruleRow} from "../../constants";
+import { nodeTypes as nodeValues, ruleRow } from "../../constants";
+import NodeModal from "../../components/modal/node-modal";
+import ActionNodeModal from "../../components/modal/action-node-modal";
 
 const nodeTypes = {
   action: ActionNode,
@@ -50,8 +52,8 @@ const Workflow = () => {
   );
 
   const getNewNodesArray = (nodes) => {
-    return nodes.map(node => ({...node, data: {...node.data}}))
-  }
+    return nodes.map((node) => ({ ...node, data: { ...node.data } }));
+  };
 
   const createNode = (e, type) => {
     const node = {
@@ -65,11 +67,16 @@ const Workflow = () => {
       type,
     };
 
-    if(type === nodeValues.rule){
-        node.data.rules = [{...ruleRow}]
+    if (type === nodeValues.rule) {
+      node.data.rules = [{ ...ruleRow }];
     }
 
-    return node
+    if (type === nodeValues.action) {
+      node.data.action = '';
+      node.data.isCustom = false;
+    }
+
+    return node;
   };
 
   const onDrop = (e) => {
@@ -95,12 +102,24 @@ const Workflow = () => {
       const ruleNode = newNodes.filter(
         (node) => node.type === nodeValues.rule
       )[0];
-      if (label) {
-        ruleNode.data.label = label;
-      }
-      if (rules) {
-        ruleNode.data.rules = rules;
-      }
+
+      ruleNode.data.label = label;
+      ruleNode.data.rules = rules;
+
+      return newNodes;
+    });
+  };
+
+  const updateActionNode = ({ label, action, isCustom }) => {
+    setNodes((nodes) => {
+      const newNodes = getNewNodesArray(nodes);
+      const actionNode = newNodes.filter(
+        (node) => node.type === nodeValues.action
+      )[0];
+
+      actionNode.data.label = label;
+      actionNode.data.action = action;
+      actionNode.data.isCustom = isCustom;
 
       return newNodes;
     });
@@ -115,6 +134,15 @@ const Workflow = () => {
           nodes.filter((node) => node.type === nodeValues.rule)[0]?.data ?? null
         }
         updateRuleNode={updateRuleNode}
+      />
+      <ActionNodeModal
+        open={openActionNode}
+        setOpen={setOpenActionNode}
+        actionNode={
+          nodes.filter((node) => node.type === nodeValues.action)[0]?.data ??
+          null
+        }
+        updateActionNode={updateActionNode}
       />
       <WorkflowHeader setDraggableCardState={setDraggableCard} nodes={nodes} />
 
