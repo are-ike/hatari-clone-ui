@@ -21,7 +21,7 @@ const DraggableCard = ({
           : type === nodeTypes.rule
           ? "bg-[#F0FFF8] border border-[#10DEB8]"
           : "bg-[#FFFBE6] border border-[#FFC12F]",
-        disabled && "!cursor-not-allowed !bg-backg border border-darkgrey select-none"
+        disabled && "!cursor-not-allowed !bg-backg border !border-darkgrey select-none"
       )}
     >
       {children}

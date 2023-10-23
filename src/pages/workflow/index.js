@@ -14,7 +14,6 @@ import RuleNode from "../../components/nodes/rule-node";
 import WorkflowHeader from "../../components/workflow-header";
 import RuleNodeModal from "../../components/modal/rule-node-modal";
 import { nodeTypes as nodeValues, ruleRow } from "../../constants";
-import NodeModal from "../../components/modal/node-modal";
 import ActionNodeModal from "../../components/modal/action-node-modal";
 
 const nodeTypes = {
@@ -55,14 +54,31 @@ const Workflow = () => {
     return nodes.map((node) => ({ ...node, data: { ...node.data } }));
   };
 
+  const deleteNode = (type) => {
+    setNodes((nodes) => {
+      let newNodes = getNewNodesArray(nodes);
+      newNodes = newNodes.filter((node) => node.id !== type);
+      return newNodes;
+    });
+
+    setEdges((edges) => {
+      let newEdges = edges.map((edge) => ({ ...edge }));
+      newEdges = newEdges.filter(
+        (edge) => edge.source !== type && edge.target !== type
+      );
+      return newEdges;
+    });
+  };
+
   const createNode = (e, type) => {
     const node = {
-      id: `${nodes.length + 1}`,
+      id: type,
       position: { x: e.pageX - 130, y: e.pageY - 130 },
       data: {
         label: "Untitled",
         open: type === nodeValues.rule ? openRuleNode : openActionNode,
         setOpen: type === nodeValues.rule ? setOpenRuleNode : setOpenActionNode,
+        onDelete: () => deleteNode(type),
       },
       type,
     };
@@ -154,11 +170,12 @@ const Workflow = () => {
         setDraggableCardState={setDraggableCard}
         nodes={nodes}
         onSave={onSave}
+        // undo={undo}
+        // undo={undo}
       />
 
       <div
-        style={{ width: "100vw", height: "100vh" }}
-        className="bg-[#F6F6F8]"
+        className="bg-[#F6F6F8] h-[calc(100vh-128px)] w-screen overflow-hidden"
         onDrop={onDrop}
         onDragOver={(e) => {
           if (draggableCard.isDragging) {
@@ -175,7 +192,6 @@ const Workflow = () => {
           onConnect={onConnect}
         >
           <Controls />
-          <MiniMap />
           <Background variant="dots" gap={12} size={1} />
         </ReactFlow>
       </div>

@@ -6,9 +6,11 @@ import PrimaryButton from "../button/primary-button";
 const WorkflowHeader = ({
   nodes,
   setDraggableCardState,
-  onSave
+  onSave,
+  undo,
+  redo,
 }) => {
-  const onDragEnd =  (e) => {
+  const onDragEnd = (e) => {
     if (e.pageX > 120) {
       setDraggableCardState((state) => ({
         ...state,
@@ -45,8 +47,8 @@ const WorkflowHeader = ({
             type={nodeTypes.input}
             disabled={doesNodeExist("inputNode")}
             onDragEnd={onDragEnd}
-            onDragStart={onDragStart("inputNode")} 
-             //not using the 'input' constant here because type of input is alredy defined in react flow and clashes with my custom type
+            onDragStart={onDragStart("inputNode")}
+            //not using the 'input' constant here because type of input is alredy defined in react flow and clashes with my custom type
           >
             Input Node
           </DraggableCard>
@@ -69,7 +71,7 @@ const WorkflowHeader = ({
         </div>
 
         <div className="flex gap-2 mr-6">
-          <button className="bg-backg p-2 rounded-sm">
+          <button className="bg-backg p-2 rounded-sm" onClick={undo}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -86,7 +88,7 @@ const WorkflowHeader = ({
             </svg>
           </button>
 
-          <button className="bg-backg p-2 rounded-sm">
+          <button className="bg-backg p-2 rounded-sm" onClick={redo}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -104,7 +106,9 @@ const WorkflowHeader = ({
           </button>
         </div>
 
-        <PrimaryButton className={"px-3 h-8 text-sm"} onClick={onSave}>Save</PrimaryButton>
+        <PrimaryButton className={"px-3 h-8 text-sm"} onClick={onSave}>
+          Save
+        </PrimaryButton>
       </div>
     </div>
   );
