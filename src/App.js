@@ -9,6 +9,8 @@ import {
 import Projects from "./pages/projects";
 import Workflow from "./pages/workflow";
 import PageNotFound from "./pages/page-not-found";
+import Config from "./pages/config";
+import Events from "./pages/events";
 
 function App() {
   return (
@@ -22,11 +24,22 @@ function App() {
           <Route exact path="/projects">
             <Projects />
           </Route>
-          <Route exact path="/workflows">
+
+          <Route exact path="/projects/:id">
+            <Events/>
+          </Route>
+          <Route exact path="/projects/:id/events">
+            <Events />
+          </Route>
+          <Route exact path="/projects/:id/workflow">
             <Workflow />
           </Route>
+          <Route exact path="/projects/:id/configuration">
+            <Config />
+          </Route>
+
           <Route path="*">
-            <PageNotFound/>
+            <PageNotFound />
           </Route>
         </Switch>
       </Router>

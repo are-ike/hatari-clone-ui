@@ -175,7 +175,7 @@ const Workflow = () => {
       />
 
       <div
-        className="bg-[#F6F6F8] h-[calc(100vh-128px)] w-screen overflow-hidden"
+        className="bg-[#F6F6F8] h-[calc(100vh-142px)] w-screen overflow-hidden"
         onDrop={onDrop}
         onDragOver={(e) => {
           if (draggableCard.isDragging) {

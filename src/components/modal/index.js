@@ -25,7 +25,7 @@ const Modal = ({
         isNodeModal && !open && "delay-[200ms]"
       )}
     >
-      {!isNodeModal && (
+      {!isNodeModal ? (
         <div className={cls("bg-white rounded-lg w-[370px] p-4", className)}>
           {header && (
             <div className="flex justify-between mb-4">
@@ -50,8 +50,9 @@ const Modal = ({
           )}
           {children}
         </div>
+      ) : (
+        children
       )}
-      {children}
     </div>
   );
 };
