@@ -7,6 +7,7 @@ const DangerButton = ({ children, onClick, className, isLoading }) => {
         <Button
           className={cls("bg-del text-white", className)}
           onClick={onClick}
+          isLoading={isLoading}
         >
           {children}
         </Button>

@@ -1,7 +1,7 @@
 import React from "react";
 import { cls } from "../../utils/functions";
 import Button from ".";
-import loader from '../../assets/loader-btn-dark.svg'
+import loaderBlack from '../../assets/loader-btn-dark.svg'
 
 const SecondaryButton = ({
   children,
@@ -19,7 +19,7 @@ const SecondaryButton = ({
       onClick={onClick}
       disabled={disabled}
       isLoading={isLoading}
-      loaderSrc={loader}
+      loaderSrc={loaderBlack}
     >
       {children}
     </Button>

@@ -26,7 +26,11 @@ const Projects = () => {
       description: "",
     },
   });
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState({
+    isOpen: false,
+    id: null,
+    name: "",
+  });
 
   const getProjects = useQuery({
     queryKey: ["projects"],
@@ -68,7 +72,7 @@ const Projects = () => {
           <button
             onClick={(e) => {
               //e.stopPropagation();
-              setOpenDeleteModal(true);
+              setOpenDeleteModal({ id: row.id, isOpen: true, name: row.name });
             }}
           >
             <svg
@@ -113,15 +117,8 @@ const Projects = () => {
 
     return (
       <div className="">
-        <AddProjectModal
-          open={openAddModal}
-          setOpen={setOpenAddModal}
-        />
-        <DeleteModal
-          open={openDeleteModal}
-          setOpen={setOpenDeleteModal}
-          text={`You're about to permanently delete this project`}
-        />
+        <AddProjectModal open={openAddModal} setOpen={setOpenAddModal} />
+        <DeleteModal open={openDeleteModal} setOpen={setOpenDeleteModal} />
 
         <div className="py-4 max-w-page mx-auto flex justify-between items-center">
           <p className="text-2xl font-medium">Projects</p>

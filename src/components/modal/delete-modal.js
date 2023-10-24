@@ -2,10 +2,37 @@ import React from "react";
 import Modal from ".";
 import DangerButton from "../button/danger-button";
 import SecondaryButton from "../button/secondary-button";
+import { useMutation } from "@tanstack/react-query";
+import projectApis from "../../api/projects";
+import { toast } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
 
-const DeleteModal = ({ open, setOpen, text }) => {
+const DeleteModal = ({ open, setOpen }) => {
+  const queryClient = useQueryClient();
+
+  const deleteProject = useMutation({
+    mutationFn: projectApis.deleteProject,
+    onSuccess: () => {
+      toast.success("Successfully deleted project");
+      queryClient.invalidateQueries(["projects"]);
+      onClose();
+    },
+    onError: () => toast.error("An error occured. Try again"),
+  });
+
+  const onDelete = () => {
+    deleteProject.mutate(open.id);
+  };
+
+  const onClose = () => {
+    setOpen({
+      isOpen: false,
+      id: null,
+      name: "",
+    });
+  };
   return (
-    <Modal open={open} setOpen={setOpen} className="py-8">
+    <Modal open={open.isOpen} setOpen={onClose} className="py-8">
       <div className="flex flex-col items-center">
         <div className="w-16 h-16 rounded-full flex items-center justify-center bg-backg mb-8">
           <svg
@@ -24,10 +51,16 @@ const DeleteModal = ({ open, setOpen, text }) => {
           </svg>
         </div>
         <p className="font-medium text-darkblue text-xl mb-4">Are you sure?</p>
-        <p className="text-center mb-8">{text}</p>
+        <p className="text-center mb-8">
+          You're about to permanently delete "{open.name}"
+        </p>
         <div className="flex gap-4">
-          <SecondaryButton onClick={() => setOpen(false)}>Cancel</SecondaryButton>
-          <DangerButton>Yes, delete</DangerButton>
+          <SecondaryButton onClick={onClose} disabled={deleteProject.isPending}>
+            Cancel
+          </SecondaryButton>
+          <DangerButton onClick={onDelete} isLoading={deleteProject.isPending}>
+            Yes, delete
+          </DangerButton>
         </div>
       </div>
     </Modal>
