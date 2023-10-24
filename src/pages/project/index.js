@@ -1,28 +1,44 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, Redirect } from "react-router-dom";
+import { Link, useLocation, Redirect, useParams } from "react-router-dom";
 import { cls } from "../../utils/functions";
 import { useQuery } from "@tanstack/react-query";
 import projectApis from "../../api/projects";
 import loader from "../../assets/loader.svg";
 import ErrorMessage from "../../components/error-message";
+import Events from "../events";
+import Workflow from "../workflow";
+import Config from "../config";
+
+const tabIds = {
+  events: "events",
+  workflow: "workflow",
+  config: "config",
+};
 
 const tabs = [
   {
     name: "Events",
-    link: "/events",
+    tabId: tabIds.events,
   },
   {
     name: "Workflow",
-    link: "/workflow",
+    tabId: tabIds.workflow,
   },
   {
     name: "Configuration",
-    link: "/configuration",
+    tabId: tabIds.config,
   },
 ];
 
-const Project = ({ children, id, isWorkflow = false, setProject }) => {
+const components = {
+  [tabIds.events]: Events,
+  [tabIds.workflow]: Workflow,
+  [tabIds.config]: Config,
+};
+
+const Project = () => {
   const { pathname } = useLocation();
+  const { id, tab } = useParams();
   const [showNotFound, setShowNotFound] = useState(false);
 
   const getProject = useQuery({
@@ -35,13 +51,18 @@ const Project = ({ children, id, isWorkflow = false, setProject }) => {
       setShowNotFound(true);
   }, [getProject.isError]);
 
-  // useEffect(() => {
-  //   if (getProject.isSuccess && getProject.data)
-  //     setProject(getProject.data);
-  // }, [getProject.isSuccess, getProject.data, setProject]);
+  const renderComponent = () => {
+    if (!tabIds.hasOwnProperty(tab))
+      return <Redirect to={`/projects/${id}/events`} />;
+
+    const Component = components[tab];
+
+    return <Component project={getProject.data} />;
+  };
 
   const render = () => {
     if (showNotFound) return <Redirect to="*" />;
+
     if (getProject.isLoading)
       return (
         <div className="flex items-center justify-center h-[calc(100vh-62px)]">
@@ -49,7 +70,7 @@ const Project = ({ children, id, isWorkflow = false, setProject }) => {
         </div>
       );
 
-    if (getProject.isError)
+    if (getProject.isError && !showNotFound)
       return (
         <div className="flex items-center justify-center h-[calc(100vh-62px)]">
           <ErrorMessage
@@ -63,8 +84,8 @@ const Project = ({ children, id, isWorkflow = false, setProject }) => {
 
     return (
       <div>
-        {isWorkflow ? (
-          children
+        {tab === tabIds.workflow ? (
+          renderComponent()
         ) : (
           <>
             <div className="py-4 max-w-page mx-auto">
@@ -76,10 +97,10 @@ const Project = ({ children, id, isWorkflow = false, setProject }) => {
             <div className="flex gap-4 max-w-page mx-auto">
               {tabs.map((tab) => (
                 <Link
-                  to={`/projects/${id}${tab.link}`}
+                  to={`/projects/${id}/${tab.tabId}`}
                   className={cls(
                     "py-3 font-medium duration-300 !border-b-2",
-                    pathname === `/projects/${id}${tab.link}`
+                    pathname === `/projects/${id}/${tab.tabId}`
                       ? "text-primary border-primary "
                       : "text-darkgrey border-transparent"
                   )}
@@ -89,7 +110,7 @@ const Project = ({ children, id, isWorkflow = false, setProject }) => {
               ))}
             </div>
             <div className="bg-backg py-8 h-[calc(100vh-192px)] overflow-y-auto">
-              <div className="max-w-page mx-auto">{children}</div>
+              <div className="max-w-page mx-auto">{renderComponent()}</div>
             </div>
           </>
         )}

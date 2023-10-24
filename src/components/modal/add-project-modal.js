@@ -5,8 +5,12 @@ import Textarea from "../input/textarea";
 import PrimaryButton from "../button/primary-button";
 import { useMutation } from "@tanstack/react-query";
 import projectApis from "../../api/projects";
+import { useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
+  const { id } = useParams();
   const [projectName, setProjectName] = useState(
     isEdit ? open.project.name : ""
   );
@@ -14,15 +18,30 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
     isEdit ? open.project.description : ""
   );
 
+  const queryClient = useQueryClient();
   const createUpdateProject = useMutation({
     mutationFn: isEdit
       ? projectApis.updateProjectConfig
       : projectApis.createProject,
     onSuccess: () => {
-      onClose();
+      const project = { name: projectName, description: projectDescription };
+      if (isEdit) {
+        queryClient.invalidateQueries(["project", id]);
+        toast.success("Successfully edited project");
+        project.id = open.project.id;
+      } else {
+        toast.success("Successfully created project");
+        queryClient.invalidateQueries(["projects"]);
+        project.id = null;
+      }
+
+      setOpen({
+        isOpen: false,
+        project,
+      });
     },
     onError: (e) => {
-      alert(e);
+      toast.error('An error occured. Try again');
     },
   });
 
@@ -32,20 +51,24 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
   }, [open]);
 
   const onClose = () => {
-    setOpen({
+    setOpen((state) => ({
       isOpen: false,
       project: {
-        id: null,
-        name: "",
-        description: "",
+        ...state.project,
       },
-    });
+    }));
   };
+
+  const isDirty = 
+    projectName.trim() !== open.project.name ||
+    projectDescription.trim() !== open.project.description;
+
+  const isValid = !!projectName.trim().length;
 
   const onSave = () => {
     const data = {
-      name: projectName,
-      description: projectDescription,
+      name: projectName.trim(),
+      description: projectDescription.trim(),
     };
 
     if (!isEdit) {
@@ -77,7 +100,12 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
           placeholder={"ex. Project for IT defence"}
         />
       </div>
-      <PrimaryButton className="w-full" onClick={onSave}>
+      <PrimaryButton
+        className="w-full"
+        onClick={onSave}
+        isLoading={createUpdateProject.isPending}
+        disabled={!(isDirty && isValid)}
+      >
         Save
       </PrimaryButton>
     </Modal>

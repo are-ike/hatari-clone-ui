@@ -1,33 +1,54 @@
-import React, { useState } from "react";
-import Project from "../project";
-import { Link, useLocation, useParams, Redirect } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import Input from "../../components/input";
 import SecondaryButton from "../../components/button/secondary-button";
 import AddProjectModal from "../../components/modal/add-project-modal";
+import { projectStatuses } from "../../constants";
+import { format } from "date-fns";
+import { useMutation } from "@tanstack/react-query";
+import projectApis from "../../api/projects";
+import { toast } from "react-toastify";
 
-const value = "hhhhhh::gjfjjfjfjfjjfjfjf:djdjd";
-const Config = () => {
-  const { id } = useParams();
-  const [webhook, setWebhook] = useState(value);
+const Config = ({ project }) => {
+  const [webhook, setWebhook] = useState(project.webhook);
   const [isEditing, setIsEditing] = useState(false);
   const [openAddModal, setOpenAddModal] = useState({
     isOpen: false,
-    project: {
-      id: null,
-      name: "",
-      description: "",
+    project: project ?? {},
+  });
+
+  useEffect(() => {
+    if (project) setOpenAddModal({ isOpen: false, project });
+  }, [project]);
+
+  const canSaveWebhook = webhook.trim() && webhook !== project.webhook
+  
+  const updateProject = useMutation({
+    mutationFn: projectApis.updateProjectConfig,
+
+    onSuccess: ({ project }) => {
+      setWebhook(project.webhook);
+      if (project.webhook) {
+        toast.success("Successfully added webhook");
+        setIsEditing(false);
+      } else {
+        toast.success("Successfully deleted webhook");
+      }
+    },
+    onError: (e) => {
+      toast.error("An error occured. Try again");
     },
   });
 
-  const setProject = (project) => {
-    setOpenAddModal((state) => ({
-      isOpen: state.isOpen,
-      project,
-    }));
+  const updateWebhook = (value) => {
+    const data = {
+      webhook: value ?? webhook.trim(),
+    };
+
+    updateProject.mutate({ id: project.id, data });
   };
 
   return (
-    <Project id={id} setProject={setProject}>
+    <div>
       <AddProjectModal open={openAddModal} setOpen={setOpenAddModal} isEdit />
       <div className="flex h-[500px] gap-8">
         <div className="rounded-lg bg-white p-8 text-darkblue w-[450px]   ">
@@ -35,9 +56,17 @@ const Config = () => {
             <div className="flex items-start justify-between">
               <div className="">
                 <p className="font-semibold text-sm mb-2">Project Name</p>
-                <p className="text-body">Sample Project name</p>
+                <p className="text-body">{project.name}</p>
               </div>
-              <button className="" onClick={() => setOpenAddModal(true)}>
+              <button
+                className=""
+                onClick={() =>
+                  setOpenAddModal((state) => ({
+                    project: state.project,
+                    isOpen: true,
+                  }))
+                }
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -51,28 +80,34 @@ const Config = () => {
             </div>
             <div>
               <p className="font-semibold text-sm mb-2">Project Description</p>
-              <p className="text-body">Sample Project name</p>
+              <p className="text-body">{project.description}</p>
             </div>
             <div>
               <p className="font-semibold text-sm mb-2">Data Stream Status</p>
-              <p className="text-body">Sample Project name</p>
+              <p className="text-body">{projectStatuses[project.status]}</p>
             </div>
             <div>
               <p className="font-semibold text-sm mb-2">Date & Time created</p>
-              <p className="text-body">Sample Project name</p>
+              <p className="text-body">
+                {format(
+                  new Date(project.createdAt),
+                  "dd/MM/yyyy, hh:mm aaaaa'm'"
+                )}
+              </p>
             </div>
           </div>
         </div>
 
         <div className="rounded-lg bg-white p-8 w-full ">
           <div className="mb-6">
-            <p className="font-medium text-body text-sm mb-2">Our webhook</p>
+            <p className="font-medium text-body text-sm mb-2">Project URL</p>
 
             <div className="flex gap-4 w-[600px]">
-              <Input value={"https://gfhfhhfhfhf.nvnvnnvnvnnv"} disabled />
+              <Input value={project.project_url} disabled />
               <SecondaryButton
                 className={"flex items-center gap-2"}
                 onClick={() => {
+                  if (!project.project_url) return alert("workflow");
                   navigator.clipboard
                     .writeText("hiiiii")
                     .then(() => alert("yh"))
@@ -95,18 +130,20 @@ const Config = () => {
           </div>
 
           <div className="mb-6">
-            <p className="font-medium text-body text-sm mb-2">Your webhook</p>
+            <p className="font-medium text-body text-sm mb-2">Webhook</p>
             <div className="flex gap-4 w-[600px]">
               <Input
                 value={webhook}
                 setValue={setWebhook}
-                disabled={!isEditing}
+                disabled={!isEditing || updateProject.isPending}
+                placeholder={"webhook url"}
               />
               {!isEditing ? (
                 <div className="flex gap-4">
                   <SecondaryButton
                     className={"flex items-center px-3 "}
                     onClick={() => setIsEditing(true)}
+                    disabled={updateProject.isPending}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -121,8 +158,9 @@ const Config = () => {
 
                   <SecondaryButton
                     className={"flex items-center px-3"}
+                    isLoading={updateProject.isPending}
                     onClick={() => {
-                      setWebhook("");
+                      updateWebhook("");
                     }}
                   >
                     <svg
@@ -142,8 +180,9 @@ const Config = () => {
               ) : (
                 <div className="flex gap-4">
                   <SecondaryButton
+                    disabled={updateProject.isPending}
                     onClick={() => {
-                      setWebhook(value);
+                      setWebhook(project.webhook);
                       setIsEditing(false);
                     }}
                   >
@@ -163,9 +202,10 @@ const Config = () => {
                     </svg>
                   </SecondaryButton>
                   <SecondaryButton
-                    disabled={!webhook}
+                    disabled={!canSaveWebhook }
+                    isLoading={updateProject.isPending}
                     onClick={() => {
-                      setIsEditing(false);
+                      updateWebhook();
                     }}
                   >
                     <svg
@@ -189,7 +229,7 @@ const Config = () => {
           </div>
         </div>
       </div>
-    </Project>
+    </div>
   );
 };
 

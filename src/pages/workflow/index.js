@@ -15,8 +15,6 @@ import WorkflowHeader from "../../components/workflow-header";
 import RuleNodeModal from "../../components/modal/rule-node-modal";
 import { nodeTypes as nodeValues, ruleRow } from "../../constants";
 import ActionNodeModal from "../../components/modal/action-node-modal";
-import Project from "../project";
-import { Link, useLocation, useParams, Redirect } from "react-router-dom";
 
 const nodeTypes = {
   action: ActionNode,
@@ -25,7 +23,6 @@ const nodeTypes = {
 };
 
 const Workflow = () => {
-  const { id } = useParams();
   const [draggableCard, setDraggableCard] = useState({
     isDragging: false,
     isDropped: false,
@@ -151,7 +148,7 @@ const Workflow = () => {
     };
   };
   return (
-    <Project isWorkflow id={id}>
+    <div>
       <RuleNodeModal
         open={openRuleNode}
         setOpen={setOpenRuleNode}
@@ -198,7 +195,7 @@ const Workflow = () => {
           <Background variant="dots" gap={12} size={1} />
         </ReactFlow>
       </div>
-    </Project>
+    </div>
   );
 };
 

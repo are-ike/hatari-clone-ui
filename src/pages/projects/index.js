@@ -13,29 +13,10 @@ import loader from "../../assets/loader.svg";
 import ErrorMessage from "../../components/error-message";
 import { useHistory } from "react-router-dom";
 
-const girl = false;
 const columns = ["project name", "created at", "actions"];
-const rows = [
-  {
-    name: "Ike",
-    createdAt: "55555",
-  },
-  {
-    name: "Ikeffoooooooooooo",
-    createdAt: "55555",
-  },
-  {
-    name: "Ike",
-    createdAt: "55555",
-  },
-  {
-    name: "Ike",
-    createdAt: "55555",
-  },
-];
 
 const Projects = () => {
-    const history = useHistory()
+  const history = useHistory();
   const [query, setQuery] = useState("");
   const [openAddModal, setOpenAddModal] = useState({
     isOpen: false,
@@ -63,34 +44,38 @@ const Projects = () => {
         <td className="p-4">{format(new Date(row.createdAt), "dd-MM-yyyy")}</td>
         <td className="flex gap-2 p-4">
           <button
-            onClick={() =>
-              setOpenAddModal({
-                isOpen: true,
-                project: { ...row },
-              })
-            }
+            onClick={(e) => {
+              //   e.stopPropagation();
+
+              history.push(`/projects/${row.id}/events`);
+            }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              stroke-width="1.5"
+              strokeWidth={2}
               stroke="currentColor"
-              class="w-[18px] h-[18px] text-darkgrey"
+              className="w-[18px] h-[18px] text-darkgrey"
             >
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
               />
             </svg>
           </button>
-          <button onClick={() => setOpenDeleteModal(true)}>
+          <button
+            onClick={(e) => {
+              //e.stopPropagation();
+              setOpenDeleteModal(true);
+            }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              stroke-width="1.5"
+              stroke-width="2"
               stroke="currentColor"
               class="w-[18px] h-[18px] text-darkgrey "
             >
@@ -131,7 +116,6 @@ const Projects = () => {
         <AddProjectModal
           open={openAddModal}
           setOpen={setOpenAddModal}
-          isEdit={openAddModal.project.id}
         />
         <DeleteModal
           open={openDeleteModal}
@@ -185,14 +169,11 @@ const Projects = () => {
                 />
                 <Table
                   columns={columns}
-                  rows={getProjects.data?.map((project) => ({
-                    id: project.id,
-                    name: project.name,
-                    createdAt: project.createdAt,
-                  }))}
+                  rows={getProjects.data}
                   renderRows={renderRows}
                   className="mt-4"
-                  onRowClick={row => history.push(`/projects/${row.id}`)}
+                  //   onRowClick={
+                  //   }
                 />
               </div>
 

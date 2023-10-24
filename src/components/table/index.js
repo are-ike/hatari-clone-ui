@@ -19,7 +19,9 @@ const Table = ({ columns, rows, renderRows, className, onRowClick }) => {
       </tr>
 
       {rows.map((row) => (
-        <tr className="border-b text-body cursor" onClick={() => onRowClick(row)}>{renderRows(row)}</tr>
+        <tr className="border-b text-body cursor" 
+        //onClick={() => onRowClick(row)}
+        >{renderRows(row)}</tr>
       ))}
     </table>
   );
