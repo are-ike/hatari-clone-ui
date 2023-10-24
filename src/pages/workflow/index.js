@@ -1,6 +1,5 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import ReactFlow, {
-  MiniMap,
   Controls,
   Background,
   useNodesState,
@@ -15,6 +14,9 @@ import WorkflowHeader from "../../components/workflow-header";
 import RuleNodeModal from "../../components/modal/rule-node-modal";
 import { nodeTypes as nodeValues, ruleRow } from "../../constants";
 import ActionNodeModal from "../../components/modal/action-node-modal";
+import { useMutation } from "@tanstack/react-query";
+import projectApis from "../../api/projects";
+import { toast } from "react-toastify";
 
 const nodeTypes = {
   action: ActionNode,
@@ -22,7 +24,7 @@ const nodeTypes = {
   rule: RuleNode,
 };
 
-const Workflow = () => {
+const Workflow = ({ project }) => {
   const [draggableCard, setDraggableCard] = useState({
     isDragging: false,
     isDropped: false,
@@ -33,6 +35,14 @@ const Workflow = () => {
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  const updateProject = useMutation({
+    mutationFn: projectApis.updateProject,
+    onSuccess: () => {
+      toast.success("Saved");
+    },
+    onError: () => toast.error("Unable to save workflow. Try again"),
+  });
 
   const onConnect = useCallback(
     (params) => {
@@ -69,6 +79,33 @@ const Workflow = () => {
       return newEdges;
     });
   };
+
+  const transformApiData = (graph) => {
+    const json = JSON.parse(graph);
+    const edges = json.edges;
+
+    const nodes = json.nodes.map((node) => {
+      node.data.open =
+        node.type === nodeValues.rule ? openRuleNode : openActionNode;
+      node.data.setOpen =
+        node.type === nodeValues.rule ? setOpenRuleNode : setOpenActionNode;
+      node.data.onDelete = () => deleteNode(node.type);
+
+      return node;
+    });
+
+    return {
+      nodes,
+      edges,
+    };
+  };
+
+  useEffect(() => {
+    if (project.nodes) {
+      setEdges(transformApiData(project.nodes).edges);
+      setNodes(transformApiData(project.nodes).nodes);
+    }
+  }, [project]);
 
   const createNode = (e, type) => {
     const node = {
@@ -143,10 +180,17 @@ const Workflow = () => {
 
   const onSave = () => {
     const payload = {
-      nodes: JSON.parse(JSON.stringify(nodes)),
+      nodes: JSON.parse(JSON.stringify(nodes)), //remove functions
       edges,
     };
+
+    updateProject.mutate({
+      id: project.id,
+      data: { nodes: JSON.stringify(payload) },
+    });
   };
+
+  //console.log(JSON.parse(project.nodes));
   return (
     <div>
       <RuleNodeModal
@@ -170,6 +214,7 @@ const Workflow = () => {
         setDraggableCardState={setDraggableCard}
         nodes={nodes}
         onSave={onSave}
+        isLoading={updateProject.isPending}
         // undo={undo}
         // undo={undo}
       />

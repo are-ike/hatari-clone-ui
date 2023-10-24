@@ -23,7 +23,7 @@ const Config = ({ project }) => {
   const canSaveWebhook = webhook.trim() && webhook !== project.webhook
   
   const updateProject = useMutation({
-    mutationFn: projectApis.updateProjectConfig,
+    mutationFn: projectApis.updateProject,
 
     onSuccess: ({ project }) => {
       setWebhook(project.webhook);

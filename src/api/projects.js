@@ -30,18 +30,9 @@ const createProject = async (data) => {
   }
 };
 
-const updateProjectConfig = async ({id, data}) => {
+const updateProject = async ({id, data}) => {
   try {
-    const response = await axios.put(`${baseUrl}/config/${id}`, data);
-    return response.data;
-  } catch (e) {
-    throw new Error(e);
-  }
-};
-
-const updateProjectNodes = async ({id, data}) => {
-  try {
-    const response = await axios.put(`${baseUrl}/nodes/${id}`, data);
+    const response = await axios.put(`${baseUrl}/${id}`, data);
     return response.data;
   } catch (e) {
     throw new Error(e);
@@ -60,8 +51,7 @@ const deleteProject = async (id) => {
 export default {
     getProject,
     getProjects,
-    updateProjectConfig,
-    updateProjectNodes,
+    updateProject,
     deleteProject,
     createProject
 }

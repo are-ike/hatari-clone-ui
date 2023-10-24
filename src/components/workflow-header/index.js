@@ -11,6 +11,7 @@ const WorkflowHeader = ({
   onSave,
   undo,
   redo,
+  isLoading,
 }) => {
   const history = useHistory();
 
@@ -129,7 +130,11 @@ const WorkflowHeader = ({
           </button>
         </div>
 
-        <PrimaryButton className={"px-3 h-8 text-sm"} onClick={onSave}>
+        <PrimaryButton
+          className={"px-3 h-8 text-sm"}
+          onClick={onSave}
+          isLoading={isLoading}
+        >
           Save
         </PrimaryButton>
       </div>

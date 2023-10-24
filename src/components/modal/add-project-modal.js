@@ -21,7 +21,7 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
   const queryClient = useQueryClient();
   const createUpdateProject = useMutation({
     mutationFn: isEdit
-      ? projectApis.updateProjectConfig
+      ? projectApis.updateProject
       : projectApis.createProject,
     onSuccess: () => {
       const project = { name: projectName, description: projectDescription };
