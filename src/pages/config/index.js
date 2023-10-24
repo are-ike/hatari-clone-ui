@@ -10,10 +10,24 @@ const Config = () => {
   const { id } = useParams();
   const [webhook, setWebhook] = useState(value);
   const [isEditing, setIsEditing] = useState(false);
-  const [openAddModal, setOpenAddModal] = useState(false);
+  const [openAddModal, setOpenAddModal] = useState({
+    isOpen: false,
+    project: {
+      id: null,
+      name: "",
+      description: "",
+    },
+  });
+
+  const setProject = (project) => {
+    setOpenAddModal((state) => ({
+      isOpen: state.isOpen,
+      project,
+    }));
+  };
 
   return (
-    <Project id={id}>
+    <Project id={id} setProject={setProject}>
       <AddProjectModal open={openAddModal} setOpen={setOpenAddModal} isEdit />
       <div className="flex h-[500px] gap-8">
         <div className="rounded-lg bg-white p-8 text-darkblue w-[450px]   ">

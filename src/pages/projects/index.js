@@ -7,6 +7,11 @@ import PrimaryButton from "../../components/button/primary-button";
 import EmptyContainer from "../../components/empty-container";
 import { format } from "date-fns";
 import ReactPaginate from "react-paginate";
+import { useQuery } from "@tanstack/react-query";
+import projectApis from "../../api/projects";
+import loader from "../../assets/loader.svg";
+import ErrorMessage from "../../components/error-message";
+import { useHistory } from "react-router-dom";
 
 const girl = false;
 const columns = ["project name", "created at", "actions"];
@@ -30,9 +35,22 @@ const rows = [
 ];
 
 const Projects = () => {
+    const history = useHistory()
   const [query, setQuery] = useState("");
-  const [openAddModal, setOpenAddModal] = useState(false);
+  const [openAddModal, setOpenAddModal] = useState({
+    isOpen: false,
+    project: {
+      id: null,
+      name: "",
+      description: "",
+    },
+  });
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+  const getProjects = useQuery({
+    queryKey: ["projects"],
+    queryFn: projectApis.getProjects,
+  });
 
   const renderRows = (row) => {
     return (
@@ -42,9 +60,16 @@ const Projects = () => {
           {row.name}
           {/* </span> */}
         </td>
-        <td className="p-4">{format(new Date(2014, 1, 11), "dd-MM-yyyy")}</td>
+        <td className="p-4">{format(new Date(row.createdAt), "dd-MM-yyyy")}</td>
         <td className="flex gap-2 p-4">
-          <button onClick={() => setOpenAddModal(true)}>
+          <button
+            onClick={() =>
+              setOpenAddModal({
+                isOpen: true,
+                project: { ...row },
+              })
+            }
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -82,11 +107,32 @@ const Projects = () => {
   };
 
   const render = () => {
-    if (girl) return "hi";
+    if (getProjects.isLoading)
+      return (
+        <div className="flex items-center justify-center h-[calc(100vh-62px)]">
+          <img src={loader} alt="" width={60} height={60} />
+        </div>
+      );
+
+    if (getProjects.isError)
+      return (
+        <div className="flex items-center justify-center h-[calc(100vh-62px)]">
+          <ErrorMessage
+            message={
+              "An error occured while fetching projects. Please try again."
+            }
+            refetch={getProjects.refetch}
+          />
+        </div>
+      );
 
     return (
       <div className="">
-        <AddProjectModal open={openAddModal} setOpen={setOpenAddModal} />
+        <AddProjectModal
+          open={openAddModal}
+          setOpen={setOpenAddModal}
+          isEdit={openAddModal.project.id}
+        />
         <DeleteModal
           open={openDeleteModal}
           setOpen={setOpenDeleteModal}
@@ -95,19 +141,39 @@ const Projects = () => {
 
         <div className="py-4 max-w-page mx-auto flex justify-between items-center">
           <p className="text-2xl font-medium">Projects</p>
-          <PrimaryButton onClick={() => setOpenAddModal(true)}>
+          <PrimaryButton
+            onClick={() =>
+              setOpenAddModal({
+                isOpen: true,
+                project: {
+                  id: null,
+                  name: "",
+                  description: "",
+                },
+              })
+            }
+          >
             Create Project
           </PrimaryButton>
         </div>
 
         <div className="bg-backg py-8 h-[calc(100vh-142px)] overflow-y-auto">
-          {!rows.length ? (
+          {!getProjects.data?.length ? (
             <EmptyContainer
               text={
                 "You haven’t created any projects yet. When you do, it’ll show up here."
               }
               buttonText={"Create Project"}
-              onClick={() => setOpenAddModal(true)}
+              onClick={() =>
+                setOpenAddModal({
+                  isOpen: true,
+                  project: {
+                    id: null,
+                    name: "",
+                    description: "",
+                  },
+                })
+              }
             />
           ) : (
             <div className="max-w-page mx-auto">
@@ -119,9 +185,14 @@ const Projects = () => {
                 />
                 <Table
                   columns={columns}
-                  rows={rows}
+                  rows={getProjects.data?.map((project) => ({
+                    id: project.id,
+                    name: project.name,
+                    createdAt: project.createdAt,
+                  }))}
                   renderRows={renderRows}
                   className="mt-4"
+                  onRowClick={row => history.push(`/projects/${row.id}`)}
                 />
               </div>
 

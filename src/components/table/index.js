@@ -1,7 +1,7 @@
 import React from "react";
 import { cls } from "../../utils/functions";
 
-const Table = ({ columns, rows, renderRows, className }) => {
+const Table = ({ columns, rows, renderRows, className, onRowClick }) => {
   return (
     <table className={cls("w-full", className)}>
       <tr className="bg-backg">
@@ -19,7 +19,7 @@ const Table = ({ columns, rows, renderRows, className }) => {
       </tr>
 
       {rows.map((row) => (
-        <tr className="border-b text-body">{renderRows(row)}</tr>
+        <tr className="border-b text-body cursor" onClick={() => onRowClick(row)}>{renderRows(row)}</tr>
       ))}
     </table>
   );
