@@ -112,8 +112,8 @@ const Workflow = ({ project }) => {
       id: type,
       position: { x: e.pageX - 130, y: e.pageY - 130 },
       data: {
-        label: "Untitled",
-        open: type === nodeValues.rule ? openRuleNode : openActionNode,
+        label: type !== "inputNode" ? "Untitled" : project.name,
+        //open: type === nodeValues.rule ? openRuleNode : openActionNode, --not needed
         setOpen: type === nodeValues.rule ? setOpenRuleNode : setOpenActionNode,
         onDelete: () => deleteNode(type),
       },

@@ -13,7 +13,7 @@ import loader from "../../assets/loader.svg";
 import ErrorMessage from "../../components/error-message";
 import { useHistory } from "react-router-dom";
 
-const columns = ["project name", "created at", "actions"];
+const columns = ["project name", "created on", "actions"];
 
 const Projects = () => {
   const history = useHistory();

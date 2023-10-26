@@ -7,21 +7,6 @@ import { cls } from "../../utils/functions";
 const Node = ({ type, data }) => {
   const isInput = type === nodeTypes.input;
   const isAction = type === nodeTypes.action;
-  //const labelContainer = useRef();
-  //const [showInput, setShowInput] = useState(false);
-
-  // const onChange = useCallback((evt) => {
-  //   data.updateNodeLabel(evt.target.value);
-  // }, []);
-
-  // const onClick = (e) => {
-  //   if (labelContainer.current?.contains(e.target)) {
-  //     setShowInput(true);
-  //   } else {
-  //     setShowInput(false);
-  //   }
-  //   console.log(e.target);
-  // };
 
   return (
     <>
@@ -39,22 +24,24 @@ const Node = ({ type, data }) => {
         >
           <p className="capitalize">{type}</p>
           <div className="flex items-center gap-2">
-            {!isInput && <button onClick={() => data.setOpen(true)}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-3 h-3 text-white"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-                />
-              </svg>
-            </button>}
+            {!isInput && (
+              <button onClick={() => data.setOpen(true)}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-3 h-3 text-white"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                  />
+                </svg>
+              </button>
+            )}
 
             <button onClick={data.onDelete}>
               <svg
@@ -74,20 +61,8 @@ const Node = ({ type, data }) => {
             </button>
           </div>
         </div>
-        <div
-          // onClick={onClick}
-          // ref={labelContainer}
-          className="px-3 py-2.5 h-[65px] rounded-b bg-white"
-        >
-          {/* {showInput ? (
-            <input
-              onChange={onChange}
-              value={data.label}
-              className="nodrag outline-none border-none  "
-            />
-          ) : ( */}
-            <p className="truncate max-w-full text-sm nodrag">{data.label}</p>
-          {/* )} */}
+        <div className="px-3 py-2.5 h-[65px] rounded-b bg-white">
+          <p className="truncate max-w-full text-sm nodrag">{data.label}</p>
         </div>
       </div>
       {!isAction && <Handle type="source" position={Position.Right} />}
