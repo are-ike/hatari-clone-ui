@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Input from "../input";
 import Dropdown from "../dropdown";
-import { conditions } from "../../constants";
+import { conditions, ruleFields, ruleOperators } from "../../constants";
 import { cls } from "../../utils/functions";
 
 const fieldOptions = [
@@ -63,9 +63,9 @@ const RuleRow = ({
         className={cls("flex gap-4 mr-6  w-full", !condition && "mr-[122px]")}
       >
         <Dropdown
-          options={fieldOptions}
+          options={ruleFields}
           value={
-            fieldOptions.filter((option) => option.value === field)[0] ?? null
+            ruleFields.filter((option) => option.value === field)[0] ?? null
           }
           setValue={(option) =>
             updateRow({ key: "field", value: option.value })
@@ -73,9 +73,9 @@ const RuleRow = ({
           placeholder={"Field"}
         />
         <Dropdown
-          options={operatorOptions}
+          options={ruleOperators}
           value={
-            operatorOptions.filter((option) => option.value === operator)[0] ??
+            ruleOperators.filter((option) => option.value === operator)[0] ??
             null
           }
           setValue={(option) =>

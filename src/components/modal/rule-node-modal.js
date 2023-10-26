@@ -67,13 +67,18 @@ const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
       setRows(newRows);
     };
 
-  const isValid = rows.every(
-    (row, idx) =>
-      row.field &&
-      row.operator &&
-      row.value &&
-      ((idx < rows.length - 1 && row.condition) || !row.condition)
-  );
+  const isValid =
+    (rows.length === 1 &&
+      rows[0].field === "" &&
+      rows[0].operator === "" &&
+      rows[0].value === "") ||
+    rows.every(
+      (row, idx) =>
+        row.field &&
+        row.operator &&
+        row.value &&
+        ((idx < rows.length - 1 && row.condition) || !row.condition)
+    );
 
   const isDirty =
     JSON.stringify(rows) !== JSON.stringify(ruleNode?.rules) ||
@@ -106,7 +111,7 @@ const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
         <div className="flex gap-4 mt-[150px] w-fit ml-auto">
           <SecondaryButton onClick={onReset}>Reset</SecondaryButton>
           <PrimaryButton onClick={onApply} disabled={!(isDirty && isValid)}>
-          Apply
+            Apply
           </PrimaryButton>
         </div>
       </div>
