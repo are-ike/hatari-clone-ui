@@ -11,7 +11,10 @@ const WorkflowHeader = ({
   onSave,
   undo,
   redo,
+  canUndo,
+  canRedo,
   isLoading,
+  isWorkflowDirty,
 }) => {
   const history = useHistory();
 
@@ -95,7 +98,11 @@ const WorkflowHeader = ({
         </div>
 
         <div className="flex gap-2 mr-6">
-          <button className="bg-backg p-2 rounded-sm" onClick={undo}>
+          <button
+            className="bg-backg p-2 rounded-sm disabled:cursor-not-allowed disabled:text-darkgrey duration-300"
+            onClick={undo}
+            disabled={!canUndo}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -112,7 +119,11 @@ const WorkflowHeader = ({
             </svg>
           </button>
 
-          <button className="bg-backg p-2 rounded-sm" onClick={redo}>
+          <button
+            className="bg-backg p-2 rounded-sm disabled:cursor-not-allowed disabled:text-darkgrey duration-300"
+            onClick={redo}
+            disabled={!canRedo}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -134,6 +145,7 @@ const WorkflowHeader = ({
           className={"px-3 h-8 text-sm"}
           onClick={onSave}
           isLoading={isLoading}
+          disabled={!isWorkflowDirty}
         >
           Save
         </PrimaryButton>

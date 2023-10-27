@@ -82,3 +82,29 @@ export const ruleOperators = [
     value: "lesser_than",
   },
 ];
+
+export const isWorkflowDirty = (oldWorkflow, newWorkflow, checkData = false) => {
+  if (oldWorkflow.nodes.length !== newWorkflow.nodes.length) return true;
+  if (oldWorkflow.edges.length !== newWorkflow.edges.length) return true;
+  // console.log(1);
+
+  for (let i = 0; i < oldWorkflow.nodes.length; i++) {
+    const node = oldWorkflow.nodes[i];
+
+    const newNode = newWorkflow.nodes.filter(n => n.id === node.id)[0]
+    // console.log(2, node, newNode);
+    if (newNode.position.x !== node.position.x) return true;
+    // console.log(3, node);
+    if (newNode.position.y !== node.position.y) return true;
+    // console.log(4, node);
+    
+    if(!checkData) continue
+
+    if(node.data.label !== newNode.data.label) return true
+    if(JSON.stringify(node.data.rules) !== JSON.stringify(newNode.data.rules) && node.id === nodeTypes.rule) return true
+    if(node.data.action !== newNode.data.action && node.id === nodeTypes.action) return true
+    if(node.data.isCustom !== newNode.data.isCustom && node.id === nodeTypes.action) return true
+
+  }
+  return false;
+};

@@ -51,7 +51,6 @@ const ActionNodeModal = ({ actionNode, open, setOpen, updateActionNode }) => {
 
   const onApply = () => {
     updateActionNode({
-      label,
       action: isCustom ? customValue : action,
       isCustom,
     });
@@ -62,7 +61,10 @@ const ActionNodeModal = ({ actionNode, open, setOpen, updateActionNode }) => {
     <NodeModal open={open} setOpen={setOpen} header={"Action Editor"}>
       <div className="flex items-center gap-2 mb-8">
         <p>Action Name: </p>
-        <EditViewName value={label} onSave={setLabel} />
+        <EditViewName
+          value={label}
+          onSave={(label) => updateRuleNode({ label })}
+        />
       </div>
       <p className="font-medium mb-2">Then statement</p>
       <div className="flex gap-4 w-[600px] items-center mx-auto border p-8 rounded">

@@ -47,7 +47,7 @@ const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
   };
 
   const onApply = () => {
-    updateRuleNode({ label, rules: rows });
+    updateRuleNode({ rules: rows });
     setOpen(false);
   };
 
@@ -89,7 +89,7 @@ const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
       <div className="max-h-[75vh] overflow-auto">
         <div className="flex items-center gap-2 mb-8">
           <p>Rule Name: </p>
-          <EditViewName value={label} onSave={setLabel} />
+          <EditViewName value={label} onSave={(label) => updateRuleNode({label})} />
         </div>
         <p className="font-medium mb-2">If statement</p>
         <div className="flex flex-col gap-4 border min-h-[80px] p-4 rounded">

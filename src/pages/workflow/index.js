@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import ReactFlow, {
   Controls,
   Background,
@@ -12,11 +18,16 @@ import InputNode from "../../components/nodes/input-node";
 import RuleNode from "../../components/nodes/rule-node";
 import WorkflowHeader from "../../components/workflow-header";
 import RuleNodeModal from "../../components/modal/rule-node-modal";
-import { nodeTypes as nodeValues, ruleRow } from "../../constants";
+import {
+  isWorkflowDirty,
+  nodeTypes as nodeValues,
+  ruleRow,
+} from "../../constants";
 import ActionNodeModal from "../../components/modal/action-node-modal";
 import { useMutation } from "@tanstack/react-query";
 import projectApis from "../../api/projects";
 import { toast } from "react-toastify";
+import useUndo from "../../hooks/useUndo";
 
 const nodeTypes = {
   action: ActionNode,
@@ -33,9 +44,21 @@ const Workflow = ({ project }) => {
   const [openRuleNode, setOpenRuleNode] = useState(false);
   const [openActionNode, setOpenActionNode] = useState(false);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState(
+    project.nodes ? transformApiData(project.nodes).nodes : []
+  );
+  const [edges, setEdges, onEdgesChange] = useEdgesState(
+    project.nodes ? transformApiData(project.nodes).edges : []
+  );
 
+  const setWorkflow = (nodes, edges) => {
+    setNodes(nodes);
+    setEdges(edges);
+  };
+
+  const { undo, redo, canRedo, canUndo, push, block } = useUndo(setWorkflow);
+
+  //console.log(nodes);
   const updateProject = useMutation({
     mutationFn: projectApis.updateProject,
     onSuccess: () => {
@@ -80,13 +103,13 @@ const Workflow = ({ project }) => {
     });
   };
 
-  const transformApiData = (graph) => {
+  function transformApiData(graph) {
     const json = JSON.parse(graph);
     const edges = json.edges;
 
     const nodes = json.nodes.map((node) => {
-      node.data.open =
-        node.type === nodeValues.rule ? openRuleNode : openActionNode;
+      // node.data.open =
+      //   node.type === nodeValues.rule ? openRuleNode : openActionNode;
       node.data.setOpen =
         node.type === nodeValues.rule ? setOpenRuleNode : setOpenActionNode;
       node.data.onDelete = () => deleteNode(node.type);
@@ -98,14 +121,30 @@ const Workflow = ({ project }) => {
       nodes,
       edges,
     };
-  };
+  }
+
+  const isDirty = useMemo(() => {
+    if (project.nodes)
+      return isWorkflowDirty(
+        transformApiData(project.nodes),
+        { nodes, edges },
+        true
+      );
+    return true;
+  }, [project, nodes, edges]);
 
   useEffect(() => {
-    if (project.nodes) {
-      setEdges(transformApiData(project.nodes).edges);
-      setNodes(transformApiData(project.nodes).nodes);
-    }
-  }, [project]);
+    // if (project.nodes) {
+    push({ nodes, edges });
+    //}
+  }, [nodes, edges]);
+
+  // useEffect(() => {
+  //   if (project.nodes) {
+  //     setEdges(transformApiData(project.nodes).edges);
+  //     setNodes(transformApiData(project.nodes).nodes);
+  //   }
+  // }, [project]);
 
   const createNode = (e, type) => {
     const node = {
@@ -149,30 +188,35 @@ const Workflow = ({ project }) => {
     });
   };
 
-  const updateRuleNode = ({ label, rules }) => {
+  const updateRuleNode = ({ label = null, rules = null }) => {
     setNodes((nodes) => {
       const newNodes = getNewNodesArray(nodes);
       const ruleNode = newNodes.filter(
         (node) => node.type === nodeValues.rule
       )[0];
 
-      ruleNode.data.label = label;
-      ruleNode.data.rules = rules;
+      if (label) ruleNode.data.label = label;
+
+      if (rules) ruleNode.data.rules = rules;
 
       return newNodes;
     });
   };
 
-  const updateActionNode = ({ label, action, isCustom }) => {
+  const updateActionNode = ({
+    label = null,
+    action = null,
+    isCustom = null,
+  }) => {
     setNodes((nodes) => {
       const newNodes = getNewNodesArray(nodes);
       const actionNode = newNodes.filter(
         (node) => node.type === nodeValues.action
       )[0];
 
-      actionNode.data.label = label;
-      actionNode.data.action = action;
-      actionNode.data.isCustom = isCustom;
+      if (label) actionNode.data.label = label;
+      if (action) actionNode.data.action = action;
+      if (isCustom) actionNode.data.isCustom = isCustom;
 
       return newNodes;
     });
@@ -189,7 +233,7 @@ const Workflow = ({ project }) => {
       data: { nodes: JSON.stringify(payload) },
     });
   };
-
+  // console.log(nodes);
   //console.log(JSON.parse(project.nodes));
   return (
     <div>
@@ -215,8 +259,11 @@ const Workflow = ({ project }) => {
         nodes={nodes}
         onSave={onSave}
         isLoading={updateProject.isPending}
-        // undo={undo}
-        // undo={undo}
+        isWorkflowDirty={isDirty}
+        undo={undo}
+        redo={redo}
+        canRedo={canRedo}
+        canUndo={canUndo}
       />
 
       <div
@@ -233,8 +280,14 @@ const Workflow = ({ project }) => {
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
+          onNodeDragStart={() => block(true, true)}
+          onNodeDragStop={() => {
+            block(false);
+            push({ nodes, edges });
+          }}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          nodeDragThreshold={20}
         >
           <Controls />
           <Background variant="dots" gap={12} size={1} />
