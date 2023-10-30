@@ -97,6 +97,7 @@ const Project = () => {
             <div className="flex gap-4 max-w-page mx-auto">
               {tabs.map((tab) => (
                 <Link
+                  key={tab.tabId}
                   to={`/projects/${id}/${tab.tabId}`}
                   className={cls(
                     "py-3 font-medium duration-300 !border-b-2",
