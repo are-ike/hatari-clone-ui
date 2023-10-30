@@ -4,6 +4,7 @@ import { nodeTypes } from "../../constants";
 import PrimaryButton from "../button/primary-button";
 import SecondaryButton from "../button/secondary-button";
 import { useHistory } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const WorkflowHeader = ({
   nodes,
@@ -49,7 +50,23 @@ const WorkflowHeader = ({
     <div className="flex items-center py-4 px-12 justify-between">
       <SecondaryButton
         className={"flex items-center gap-2"}
-        onClick={() => history.goBack()}
+        onClick={() => {
+          //if (!isWorkflowDirty) {
+            history.goBack();
+          // } else {
+          //   toast.warn(
+          //     <div>
+          //       <span>"Your changes have not been saved"</span>
+          //       <SecondaryButton
+          //         className={"px-3 h-8 text-sm"}
+          //         onClick={(e) => {e.stopPropagation(); history.goBack();}}
+          //       >
+          //         Leave
+          //       </SecondaryButton>
+          //     </div>
+          //   );
+          // }
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

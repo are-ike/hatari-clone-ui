@@ -67,29 +67,26 @@ const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
       setRows(newRows);
     };
 
-  const isValid =
-    (rows.length === 1 &&
-      rows[0].field === "" &&
-      rows[0].operator === "" &&
-      rows[0].value === "") ||
-    rows.every(
-      (row, idx) =>
-        row.field &&
-        row.operator &&
-        row.value &&
-        ((idx < rows.length - 1 && row.condition) || !row.condition)
-    );
+  const isValid = rows.every(
+    (row, idx) =>
+      row.field &&
+      row.operator &&
+      row.value &&
+      ((idx < rows.length - 1 && row.condition) || !row.condition)
+  );
 
   const isDirty =
-    JSON.stringify(rows) !== JSON.stringify(ruleNode?.rules) ||
-    label !== ruleNode?.label;
+    JSON.stringify(rows) !== JSON.stringify(ruleNode?.rules) 
 
   return (
     <NodeModal open={open} setOpen={setOpen} header={"Rule Editor"}>
       <div className="max-h-[75vh] overflow-auto">
         <div className="flex items-center gap-2 mb-8">
           <p>Rule Name: </p>
-          <EditViewName value={label} onSave={(label) => updateRuleNode({label})} />
+          <EditViewName
+            value={label}
+            onSave={(label) => updateRuleNode({ label })}
+          />
         </div>
         <p className="font-medium mb-2">If statement</p>
         <div className="flex flex-col gap-4 border min-h-[80px] p-4 rounded">

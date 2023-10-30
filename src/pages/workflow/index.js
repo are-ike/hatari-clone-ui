@@ -28,6 +28,8 @@ import { useMutation } from "@tanstack/react-query";
 import projectApis from "../../api/projects";
 import { toast } from "react-toastify";
 import useUndo from "../../hooks/useUndo";
+import { useHistory } from "react-router-dom";
+import SecondaryButton from "../../components/button/secondary-button";
 
 const nodeTypes = {
   action: ActionNode,
@@ -36,6 +38,8 @@ const nodeTypes = {
 };
 
 const Workflow = ({ project }) => {
+  const history = useHistory();
+  const [canLeave, setCanLeave] = useState(false);
   const [draggableCard, setDraggableCard] = useState({
     isDragging: false,
     isDropped: false,
@@ -134,17 +138,40 @@ const Workflow = ({ project }) => {
   }, [project, nodes, edges]);
 
   useEffect(() => {
-    // if (project.nodes) {
     push({ nodes, edges });
-    //}
   }, [nodes, edges]);
 
   // useEffect(() => {
-  //   if (project.nodes) {
-  //     setEdges(transformApiData(project.nodes).edges);
-  //     setNodes(transformApiData(project.nodes).nodes);
+  //   if (isDirty) {
+  //     window.onbeforeunload = () => true;
+  //   } else {
+  //     window.onbeforeunload = undefined;
   //   }
-  // }, [project]);
+  // }, [isDirty]);
+
+  // useEffect(() => {
+  //   if (isDirty && !canLeave) {
+  //     history.block((location) => {
+  //       toast.dismiss();
+  //       toast.warn(
+  //         <div>
+  //           <span>"Your changes have not been saved"</span>
+  //           <SecondaryButton
+  //             className={"px-3 h-8 text-sm"}
+  //             onClick={(e) => {
+  //               setCanLeave(true);
+  //               e.stopPropagation();
+  //               history.push(location.pathname);
+  //             }}
+  //           >
+  //             Leave
+  //           </SecondaryButton>
+  //         </div>
+  //       );
+  //       return false;
+  //     });
+  //   }
+  // }, [isDirty, canLeave]);
 
   const createNode = (e, type) => {
     const node = {
@@ -287,7 +314,7 @@ const Workflow = ({ project }) => {
           }}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
-          nodeDragThreshold={20}
+          
         >
           <Controls />
           <Background variant="dots" gap={12} size={1} />

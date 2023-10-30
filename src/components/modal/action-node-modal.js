@@ -24,7 +24,6 @@ const ActionNodeModal = ({ actionNode, open, setOpen, updateActionNode }) => {
 
   const isValid = (isCustom && !!customValue) || (!isCustom && !!action);
   const isDirty = () => {
-    if (label !== actionNode?.label) return true;
     if (isCustom !== actionNode?.isCustom) return true;
 
     if (isCustom) return customValue !== actionNode?.action;
@@ -63,7 +62,7 @@ const ActionNodeModal = ({ actionNode, open, setOpen, updateActionNode }) => {
         <p>Action Name: </p>
         <EditViewName
           value={label}
-          onSave={(label) => updateRuleNode({ label })}
+          onSave={(label) => updateActionNode({ label })}
         />
       </div>
       <p className="font-medium mb-2">Then statement</p>
