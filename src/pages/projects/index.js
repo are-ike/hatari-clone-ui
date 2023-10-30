@@ -12,8 +12,10 @@ import projectApis from "../../api/projects";
 import loader from "../../assets/loader.svg";
 import ErrorMessage from "../../components/error-message";
 import { useHistory } from "react-router-dom";
+import Tag from "../../components/tag";
+import { projectStatuses } from "../../constants";
 
-const columns = ["project name", "created on", "actions"];
+const columns = ["project name", "created on", "data stream", "actions"];
 
 const Projects = () => {
   const history = useHistory();
@@ -46,13 +48,16 @@ const Projects = () => {
           {/* </span> */}
         </td>
         <td className="p-4">{format(new Date(row.createdAt), "dd-MM-yyyy")}</td>
+        <td className="p-4">
+          <Tag type={row.status}>{projectStatuses[row.status]}</Tag>
+        </td>
         <td className="flex gap-2 p-4">
-          <button
-            onClick={(e) => {
-              //   e.stopPropagation();
+          {/* <button
+          onClick={(e) => {
+             e.stopPropagation();
 
-              history.push(`/projects/${row.id}/events`);
-            }}
+            history.push(`/projects/${row.id}/events`);
+          }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -68,25 +73,24 @@ const Projects = () => {
                 d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
               />
             </svg>
-          </button>
+          </button> */}
           <button
+            className="hover:text-[#5E5E72] text-darkgrey"
             onClick={(e) => {
-              //e.stopPropagation();
+              e.stopPropagation();
               setOpenDeleteModal({ id: row.id, isOpen: true, name: row.name });
             }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              fill="none"
               viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              class="w-[18px] h-[18px] text-darkgrey "
+              fill="currentColor"
+              className="w-[18px] h-[18px]"
             >
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                fillRule="evenodd"
+                d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z"
+                clipRule="evenodd"
               />
             </svg>
           </button>
@@ -169,8 +173,9 @@ const Projects = () => {
                   rows={getProjects.data}
                   renderRows={renderRows}
                   className="mt-4"
-                  //   onRowClick={
-                  //   }
+                  onRowClick={(row) =>
+                    history.push(`/projects/${row.id}/events`)
+                  }
                 />
               </div>
 

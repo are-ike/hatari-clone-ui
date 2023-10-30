@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
+import { cls } from "../../utils/functions";
 
 const SearchBar = ({ query, setQuery, placeholder }) => {
+  const [isFocused, setIsFocused] = useState(false);
   return (
-    <div className="flex gap-2 pl-4 border-none items-center bg-backg rounded">
+    <div
+      className={cls(
+        "flex gap-2 pl-4 border-none items-center bg-backg rounded duration-300",
+        isFocused && "ring-btnHover ring-1"
+      )}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -20,8 +27,10 @@ const SearchBar = ({ query, setQuery, placeholder }) => {
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         placeholder={placeholder}
-        className="w-full py-4 border-none outline-none bg-backg text-body"
+        className="w-full py-4 border-none outline-none bg-backg text-body rounded"
       />
     </div>
   );

@@ -75,17 +75,18 @@ const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
       ((idx < rows.length - 1 && row.condition) || !row.condition)
   );
 
-  const isDirty =
-    JSON.stringify(rows) !== JSON.stringify(ruleNode?.rules) 
+  const isDirty = JSON.stringify(rows) !== JSON.stringify(ruleNode?.rules);
 
   return (
     <NodeModal open={open} setOpen={setOpen} header={"Rule Editor"}>
       <div className="max-h-[75vh] overflow-auto">
-        <div className="flex items-center gap-2 mb-8">
+        <div className="flex items-center gap-2 mb-8 mt-2">
           <p>Rule Name: </p>
           <EditViewName
             value={label}
-            onSave={(label) => updateRuleNode({ label })}
+            onSave={(newLabel) => {
+              if (newLabel !== label) updateRuleNode({ label: newLabel });
+            }}
           />
         </div>
         <p className="font-medium mb-2">If statement</p>

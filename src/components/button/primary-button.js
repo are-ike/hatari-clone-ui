@@ -12,7 +12,7 @@ const PrimaryButton = ({
   return (
     <Button
       className={cls(
-        "bg-primary text-white disabled:cursor-not-allowed disabled:bg-btnDisabled hover:bg-btnHover",
+        "bg-primary text-white disabled:cursor-not-allowed disabled:bg-btnDisabled hover:bg-btnHover focus:ring-btnHover focus:ring-1 ring-offset-1",
         className
       )}
       onClick={onClick}

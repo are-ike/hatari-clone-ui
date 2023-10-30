@@ -37,6 +37,9 @@ function App() {
             <Route exact path="/projects/:id/:tab">
               <Project />
             </Route>
+            <Route exact path="/projects/:id">
+            <Project />
+            </Route>
             <Route path="*">
               <PageNotFound />
             </Route>

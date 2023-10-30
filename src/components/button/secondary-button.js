@@ -1,7 +1,7 @@
 import React from "react";
 import { cls } from "../../utils/functions";
 import Button from ".";
-import loaderBlack from '../../assets/loader-btn-dark.svg'
+import loaderBlack from "../../assets/loader-btn-dark.svg";
 
 const SecondaryButton = ({
   children,
@@ -13,7 +13,7 @@ const SecondaryButton = ({
   return (
     <Button
       className={cls(
-        "bg-backg text-darkblue disabled:cursor-not-allowed",
+        "bg-backg text-darkblue disabled:cursor-not-allowed disabled:text-darkgrey hover:text-primary",
         className
       )}
       onClick={onClick}

@@ -8,7 +8,7 @@ const Table = ({ columns, rows, renderRows, className, onRowClick }) => {
         {columns.map((col, i) => (
           <th
             className={cls(
-              "capitalize p-4 text-left text-darkblue font-normal",
+              "capitalize p-4 text-left text-sm font-bold text-darkblue font-normal",
               i === 0 && "rounded-tl-lg",
               i === columns.length - 1 && "rounded-tr-lg"
             )}
@@ -19,9 +19,12 @@ const Table = ({ columns, rows, renderRows, className, onRowClick }) => {
       </tr>
 
       {rows.map((row) => (
-        <tr className="border-b text-body cursor" 
-        //onClick={() => onRowClick(row)}
-        >{renderRows(row)}</tr>
+        <tr
+          className="border-b text-body text-sm font-medium cursor-pointer hover:bg-blueLight/40 duration-300"
+          onClick={() => onRowClick(row)}
+        >
+          {renderRows(row)}
+        </tr>
       ))}
     </table>
   );

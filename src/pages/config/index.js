@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Input from "../../components/input";
 import SecondaryButton from "../../components/button/secondary-button";
 import AddProjectModal from "../../components/modal/add-project-modal";
-import { projectStatuses } from "../../constants";
+import { isValidUrl, projectStatuses } from "../../constants";
 import { format } from "date-fns";
 import { useMutation } from "@tanstack/react-query";
 import projectApis from "../../api/projects";
 import { toast } from "react-toastify";
+import Tag from "../../components/tag";
 
 const Config = ({ project }) => {
   const [webhook, setWebhook] = useState(project.webhook);
@@ -15,13 +16,23 @@ const Config = ({ project }) => {
     isOpen: false,
     project: project ?? {},
   });
+  const inputRef = useRef();
 
   useEffect(() => {
     if (project) setOpenAddModal({ isOpen: false, project });
   }, [project]);
 
-  const canSaveWebhook = webhook.trim() && webhook !== project.webhook
-  
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditing, inputRef.current]);
+
+  const canSaveWebhook =
+    webhook.trim() &&
+    webhook.trim() !== project.webhook &&
+    isValidUrl(webhook.trim());
+
   const updateProject = useMutation({
     mutationFn: projectApis.updateProject,
 
@@ -84,7 +95,9 @@ const Config = ({ project }) => {
             </div>
             <div>
               <p className="font-semibold text-sm mb-2">Data Stream Status</p>
-              <p className="text-body">{projectStatuses[project.status]}</p>
+              <Tag className="!py-2" type={project.status}>
+                {projectStatuses[project.status]}
+              </Tag>
             </div>
             <div>
               <p className="font-semibold text-sm mb-2">Date & Time created</p>
@@ -136,7 +149,8 @@ const Config = ({ project }) => {
                 value={webhook}
                 setValue={setWebhook}
                 disabled={!isEditing || updateProject.isPending}
-                placeholder={"webhook url"}
+                placeholder={"Enter a valid webhook URL"}
+                innerRef={inputRef}
               />
               {!isEditing ? (
                 <div className="flex gap-4">
@@ -202,7 +216,7 @@ const Config = ({ project }) => {
                     </svg>
                   </SecondaryButton>
                   <SecondaryButton
-                    disabled={!canSaveWebhook }
+                    disabled={!canSaveWebhook}
                     isLoading={updateProject.isPending}
                     onClick={() => {
                       updateWebhook();

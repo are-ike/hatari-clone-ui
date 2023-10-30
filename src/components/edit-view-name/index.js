@@ -1,12 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const EditViewName = ({ value, onSave }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentValue, setCurrentValue] = useState(value);
+  const inputRef = useRef();
 
   useEffect(() => {
     setCurrentValue(value);
   }, [value]);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditing, inputRef.current]);
 
   return (
     <div>
@@ -15,7 +22,11 @@ const EditViewName = ({ value, onSave }) => {
           <p className="max-w-[300px] h-[42px] text-[17px] font-medium flex items-center truncate">
             {currentValue}
           </p>
-          <button onClick={() => setIsEditing(true)}>
+          <button
+            onClick={() => {
+              setIsEditing(true);
+            }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -33,7 +44,8 @@ const EditViewName = ({ value, onSave }) => {
             type="text"
             value={currentValue}
             onChange={(e) => setCurrentValue(e.target.value)}
-            className="border rounded p-2 outline-none"
+            className="border rounded p-2 outline-none focus:ring-btnHover focus:ring-1"
+            ref={inputRef}
           />
           <button
             onClick={() => {
@@ -57,10 +69,10 @@ const EditViewName = ({ value, onSave }) => {
             </svg>
           </button>
           <button
-            disabled={!currentValue}
+            disabled={!currentValue.trim()}
             className="disabled:cursor-not-allowed disabled:text-darkgrey text-primary"
             onClick={() => {
-              onSave(currentValue);
+              onSave(currentValue.trim());
               setIsEditing(false);
             }}
           >

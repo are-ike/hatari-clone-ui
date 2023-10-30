@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Modal from ".";
 import Input from "../input";
 import Textarea from "../input/textarea";
@@ -18,11 +18,10 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
     isEdit ? open.project.description : ""
   );
 
+  const inputRef = useRef();
   const queryClient = useQueryClient();
   const createUpdateProject = useMutation({
-    mutationFn: isEdit
-      ? projectApis.updateProject
-      : projectApis.createProject,
+    mutationFn: isEdit ? projectApis.updateProject : projectApis.createProject,
     onSuccess: () => {
       const project = { name: projectName, description: projectDescription };
       if (isEdit) {
@@ -41,7 +40,7 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
       });
     },
     onError: (e) => {
-      toast.error('An error occured. Try again');
+      toast.error("An error occured. Try again");
     },
   });
 
@@ -49,6 +48,12 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
     setProjectName(isEdit ? open.project.name : "");
     setProjectDescription(isEdit ? open.project.description : "");
   }, [open]);
+
+  useEffect(() => {
+    if (open.isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [open, inputRef.current]);
 
   const onClose = () => {
     setOpen((state) => ({
@@ -59,7 +64,7 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
     }));
   };
 
-  const isDirty = 
+  const isDirty =
     projectName.trim() !== open.project.name ||
     projectDescription.trim() !== open.project.description;
 
@@ -90,6 +95,7 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
           value={projectName}
           setValue={setProjectName}
           placeholder={"ex. IT Project "}
+          innerRef={inputRef}
         />
       </div>
       <div className="mb-4">

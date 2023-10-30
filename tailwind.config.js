@@ -13,7 +13,9 @@ module.exports = {
         del: '#F23577',
         darkgrey: '#AFAFB9',
         btnHover: '#002FB3',
-        btnDisabled: '#6282DA'
+        btnDisabled: '#6282DA',
+        blueLight:'#D0D9F4',
+        green: '#31D0AA'
       },
       maxWidth: {
         'page': '1200px',
