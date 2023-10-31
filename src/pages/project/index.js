@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, Redirect, useParams } from "react-router-dom";
 import { cls } from "../../utils/functions";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "react-query";
 import projectApis from "../../api/projects";
 import loader from "../../assets/loader.svg";
 import ErrorMessage from "../../components/error-message";
@@ -61,7 +61,7 @@ const Project = () => {
   };
 
   const render = () => {
-    if (showNotFound) return <Redirect to='/404' />;
+    if (showNotFound) return <Redirect to="/404" />;
 
     if (getProject.isLoading)
       return (

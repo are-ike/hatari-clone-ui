@@ -2,10 +2,14 @@ import axios from "axios";
 
 const baseUrl = "http://localhost:8000/projects";
 
-
-const getProjects = async () => {
+const getProjects = async ({ page, query }) => {
   try {
-    const response = await axios.get(baseUrl);
+    const response = await axios.get(baseUrl, {
+      params: {
+        page,
+        query,
+      },
+    });
     return response.data;
   } catch (e) {
     throw new Error(e);
@@ -30,7 +34,7 @@ const createProject = async (data) => {
   }
 };
 
-const updateProject = async ({id, data}) => {
+const updateProject = async ({ id, data }) => {
   try {
     const response = await axios.put(`${baseUrl}/${id}`, data);
     return response.data;
@@ -49,9 +53,9 @@ const deleteProject = async (id) => {
 };
 
 export default {
-    getProject,
-    getProjects,
-    updateProject,
-    deleteProject,
-    createProject
-}
+  getProject,
+  getProjects,
+  updateProject,
+  deleteProject,
+  createProject,
+};

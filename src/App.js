@@ -9,7 +9,7 @@ import {
 import Projects from "./pages/projects";
 import PageNotFound from "./pages/page-not-found";
 import Project from "./pages/project";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

@@ -3,10 +3,10 @@ import Modal from ".";
 import Input from "../input";
 import Textarea from "../input/textarea";
 import PrimaryButton from "../button/primary-button";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation } from "react-query";
 import projectApis from "../../api/projects";
 import { useParams } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import Toast, { types } from "../toast";
 
@@ -93,7 +93,7 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
       open={open.isOpen}
       setOpen={onClose}
       header={isEdit ? "Edit Project" : "Create Project"}
-      canClose={!createUpdateProject.isPending}
+      canClose={!createUpdateProject.isLoading}
     >
       <div className="mb-4">
         <p className="text-sm mb-2 text-body">Project Name</p>
@@ -115,7 +115,7 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
       <PrimaryButton
         className="w-full"
         onClick={onSave}
-        isLoading={createUpdateProject.isPending}
+        isLoading={createUpdateProject.isLoading}
         disabled={!(isDirty && isValid)}
       >
         Save

@@ -2,10 +2,10 @@ import React from "react";
 import Modal from ".";
 import DangerButton from "../button/danger-button";
 import SecondaryButton from "../button/secondary-button";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation } from "react-query";
 import projectApis from "../../api/projects";
 import { toast } from "react-toastify";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "react-query";
 
 const DeleteModal = ({ open, setOpen }) => {
   const queryClient = useQueryClient();
@@ -36,7 +36,7 @@ const DeleteModal = ({ open, setOpen }) => {
       open={open.isOpen}
       setOpen={onClose}
       className="py-8"
-      canClose={!deleteProject.isPending}
+      canClose={!deleteProject.isLoading}
     >
       <div className="flex flex-col items-center">
         <div className="w-16 h-16 rounded-full flex items-center justify-center bg-backg mb-8">
@@ -60,10 +60,10 @@ const DeleteModal = ({ open, setOpen }) => {
           You're about to permanently delete "{open.name}"
         </p>
         <div className="flex gap-4">
-          <SecondaryButton onClick={onClose} disabled={deleteProject.isPending}>
+          <SecondaryButton onClick={onClose} disabled={deleteProject.isLoading}>
             Cancel
           </SecondaryButton>
-          <DangerButton onClick={onDelete} isLoading={deleteProject.isPending}>
+          <DangerButton onClick={onDelete} isLoading={deleteProject.isLoading}>
             Yes, delete
           </DangerButton>
         </div>

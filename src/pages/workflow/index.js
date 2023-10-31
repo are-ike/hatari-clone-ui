@@ -24,7 +24,7 @@ import {
   ruleRow,
 } from "../../constants";
 import ActionNodeModal from "../../components/modal/action-node-modal";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation } from "react-query";
 import projectApis from "../../api/projects";
 import { toast } from "react-toastify";
 import useUndo from "../../hooks/useUndo";
@@ -285,7 +285,7 @@ const Workflow = ({ project }) => {
         setDraggableCardState={setDraggableCard}
         nodes={nodes}
         onSave={onSave}
-        isLoading={updateProject.isPending}
+        isLoading={updateProject.isLoading}
         isWorkflowDirty={isDirty}
         undo={undo}
         redo={redo}
@@ -314,7 +314,6 @@ const Workflow = ({ project }) => {
           }}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
-          
         >
           <Controls />
           <Background variant="dots" gap={12} size={1} />

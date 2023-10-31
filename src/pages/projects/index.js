@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SearchBar from "../../components/searchbar";
 import Table from "../../components/table";
 import AddProjectModal from "../../components/modal/add-project-modal";
@@ -7,19 +7,22 @@ import PrimaryButton from "../../components/button/primary-button";
 import EmptyContainer from "../../components/empty-container";
 import { format } from "date-fns";
 import ReactPaginate from "react-paginate";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "react-query";
 import projectApis from "../../api/projects";
 import loader from "../../assets/loader.svg";
 import ErrorMessage from "../../components/error-message";
 import { useHistory } from "react-router-dom";
 import Tag from "../../components/tag";
 import { projectStatuses } from "../../constants";
+import useSetParams from "../../hooks/useSetParams";
 
 const columns = ["project name", "created on", "data stream", "actions"];
 
 const Projects = () => {
   const history = useHistory();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useSetParams("query");
+  const [page, setPage] = useSetParams("page");
+
   const [openAddModal, setOpenAddModal] = useState({
     isOpen: false,
     project: {
@@ -34,9 +37,16 @@ const Projects = () => {
     name: "",
   });
 
+  useEffect(() => {
+    if (!page) setPage(1);
+  }, [page]);
+  console.log(page, query);
+
   const getProjects = useQuery({
-    queryKey: ["projects"],
-    queryFn: projectApis.getProjects,
+    queryKey: ["projects", page, query],
+    queryFn: () => projectApis.getProjects({ page, query }),
+    enabled: !!page,
+    keepPreviousData: true,
   });
 
   const renderRows = (row) => {
@@ -44,38 +54,42 @@ const Projects = () => {
       <>
         <td className="px-4" title={row.name}>
           <span className="truncate max-w-[200px] inline-block ">
-          {row.name}
+            {row.name}
           </span>
         </td>
-        <td className="p-4">{format(new Date(row.createdAt), "dd MMM, yyyy")}</td>
+        <td className="p-4">
+          {format(new Date(row.createdAt), "dd MMM, yyyy")}
+        </td>
         <td className="py-2 px-4">
           <Tag type={row.status}>{projectStatuses[row.status]}</Tag>
         </td>
-        <td className="flex gap-2 p-4">
-          {/* <button
-          onClick={(e) => {
-             e.stopPropagation();
-
-            history.push(`/projects/${row.id}/events`);
-          }}
+        <td className="flex gap-1 px-4 items-center h-[52px]">
+          <button
+            className="hover:text-[#5E5E72] text-darkgrey p-1"
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenAddModal({
+                isOpen: true,
+                project: {
+                  id: row.id,
+                  name: row.name,
+                  description: row.description,
+                },
+              });
+            }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              fill="none"
               viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-[18px] h-[18px] text-darkgrey"
+              fill="currentColor"
+              className="w-[18px] h-[18px]"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-              />
+              <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z" />
+              <path d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z" />
             </svg>
-          </button> */}
+          </button>
           <button
-            className="hover:text-[#5E5E72] text-darkgrey h-full"
+            className="hover:text-[#5E5E72] text-darkgrey p-1"
             onClick={(e) => {
               e.stopPropagation();
               setOpenDeleteModal({ id: row.id, isOpen: true, name: row.name });
@@ -121,7 +135,11 @@ const Projects = () => {
 
     return (
       <div className="">
-        <AddProjectModal open={openAddModal} setOpen={setOpenAddModal} />
+        <AddProjectModal
+          open={openAddModal}
+          setOpen={setOpenAddModal}
+          isEdit={openAddModal.project.id}
+        />
         <DeleteModal open={openDeleteModal} setOpen={setOpenDeleteModal} />
 
         <div className="py-4 max-w-page mx-auto flex justify-between items-center">
@@ -143,7 +161,7 @@ const Projects = () => {
         </div>
 
         <div className="bg-backg py-8 h-[calc(100vh-142px)] overflow-y-auto">
-          {!getProjects.data?.length ? (
+          {!getProjects.data?.projects?.length && !query && page == 1 ? (
             <EmptyContainer
               text={
                 "You haven’t created any projects yet. When you do, it’ll show up here."
@@ -168,30 +186,40 @@ const Projects = () => {
                   query={query}
                   setQuery={setQuery}
                 />
-                <Table
-                  columns={columns}
-                  rows={getProjects.data}
-                  renderRows={renderRows}
-                  className="mt-4"
-                  onRowClick={(row) =>
-                    history.push(`/projects/${row.id}/events`)
-                  }
-                />
+                {!!getProjects.data?.projects?.length ? (
+                  <Table
+                    columns={columns}
+                    rows={getProjects.data?.projects}
+                    renderRows={renderRows}
+                    className="mt-4"
+                    onRowClick={(row) =>
+                      history.push(`/projects/${row.id}/events`)
+                    }
+                    isLoading={getProjects.isFetching}
+                  />
+                ) : (
+                  <p className="text-darkgrey font-medium my-8 text-center">
+                    No projects found
+                  </p>
+                )}
               </div>
 
-              <ReactPaginate
-                className="flex p-2 bg-white w-fit rounded mt-4 ml-auto items-center"
-                pageLinkClassName="h-8 w-8 text-body flex items-center justify-center hover:bg-primary hover:text-white rounded"
-                nextLabel={"Next >"}
-                onPageChange={(e) => console.log(e.selected)}
-                pageRangeDisplayed={5}
-                pageCount={5}
-                previousLabel={"< Previous"}
-                previousLinkClassName="mr-2"
-                nextLinkClassName="ml-2"
-                disabledLinkClassName="text-darkgrey cursor-not-allowed"
-                activeLinkClassName="bg-primary text-white"
-              />
+              {!!getProjects.data?.projects?.length && (
+                <ReactPaginate
+                  className="flex p-2 bg-white w-fit rounded mt-4 ml-auto items-center"
+                  pageLinkClassName="h-8 w-8 text-body flex items-center justify-center hover:bg-primary hover:text-white rounded"
+                  nextLabel={"Next >"}
+                  forcePage={page - 1}
+                  onPageChange={(e) => setPage(e.selected + 1)}
+                  pageRangeDisplayed={5}
+                  pageCount={getProjects.data?.totalPages}
+                  previousLabel={"< Previous"}
+                  previousLinkClassName="mr-2"
+                  nextLinkClassName="ml-2"
+                  disabledLinkClassName="text-darkgrey cursor-not-allowed"
+                  activeLinkClassName="bg-primary text-white"
+                />
+              )}
             </div>
           )}
         </div>

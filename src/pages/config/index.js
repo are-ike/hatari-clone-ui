@@ -4,7 +4,7 @@ import SecondaryButton from "../../components/button/secondary-button";
 import AddProjectModal from "../../components/modal/add-project-modal";
 import { isValidUrl, projectStatuses } from "../../constants";
 import { format } from "date-fns";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation } from "react-query";
 import projectApis from "../../api/projects";
 import { toast } from "react-toastify";
 import Tag from "../../components/tag";
@@ -167,7 +167,7 @@ const Config = ({ project }) => {
               <Input
                 value={webhook}
                 setValue={setWebhook}
-                disabled={!isEditing || updateProject.isPending}
+                disabled={!isEditing || updateProject.isLoading}
                 placeholder={"Enter a valid webhook URL"}
                 innerRef={inputRef}
               />
@@ -176,7 +176,7 @@ const Config = ({ project }) => {
                   <SecondaryButton
                     className={"flex items-center px-3 "}
                     onClick={() => setIsEditing(true)}
-                    disabled={updateProject.isPending}
+                    disabled={updateProject.isLoading}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -191,7 +191,7 @@ const Config = ({ project }) => {
 
                   <SecondaryButton
                     className={"flex items-center px-3"}
-                    isLoading={updateProject.isPending}
+                    isLoading={updateProject.isLoading}
                     onClick={() => {
                       updateWebhook("");
                     }}
@@ -213,7 +213,7 @@ const Config = ({ project }) => {
               ) : (
                 <div className="flex gap-4">
                   <SecondaryButton
-                    disabled={updateProject.isPending}
+                    disabled={updateProject.isLoading}
                     onClick={() => {
                       setWebhook(project.webhook);
                       setIsEditing(false);
@@ -236,7 +236,7 @@ const Config = ({ project }) => {
                   </SecondaryButton>
                   <SecondaryButton
                     disabled={!canSaveWebhook}
-                    isLoading={updateProject.isPending}
+                    isLoading={updateProject.isLoading}
                     onClick={() => {
                       updateWebhook();
                     }}
