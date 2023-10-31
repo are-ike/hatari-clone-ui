@@ -8,6 +8,7 @@ const Modal = ({
   header,
   className,
   isNodeModal = false,
+  canClose = true,
 }) => {
   const underlay = useRef();
 
@@ -16,7 +17,7 @@ const Modal = ({
       ref={underlay}
       onClick={(e) => {
         if (e.target === underlay.current) {
-          setOpen(false);
+          canClose && setOpen(false);
         }
       }}
       className={cls(
@@ -30,7 +31,10 @@ const Modal = ({
           {header && (
             <div className="flex justify-between mb-4">
               <p className="font-medium text-lg">{header}</p>
-              <button onClick={() => setOpen(false)}>
+              <button
+                onClick={() => canClose && setOpen(false)}
+                className={!canClose && "text-darkgrey"}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"

@@ -88,6 +88,7 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
       open={open.isOpen}
       setOpen={onClose}
       header={isEdit ? "Edit Project" : "Create Project"}
+      canClose={!createUpdateProject.isPending}
     >
       <div className="mb-4">
         <p className="text-sm mb-2 text-body">Project Name</p>

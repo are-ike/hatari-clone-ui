@@ -32,7 +32,12 @@ const DeleteModal = ({ open, setOpen }) => {
     });
   };
   return (
-    <Modal open={open.isOpen} setOpen={onClose} className="py-8">
+    <Modal
+      open={open.isOpen}
+      setOpen={onClose}
+      className="py-8"
+      canClose={!deleteProject.isPending}
+    >
       <div className="flex flex-col items-center">
         <div className="w-16 h-16 rounded-full flex items-center justify-center bg-backg mb-8">
           <svg

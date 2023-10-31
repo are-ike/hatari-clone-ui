@@ -4,6 +4,7 @@ import NodeModal from "./node-modal";
 import Dropdown from "../dropdown";
 import Input from "../input";
 import PrimaryButton from "../button/primary-button";
+import SecondaryButton from "../button/secondary-button";
 
 const actionOptions = [
   { label: "Allow", value: "allow" },
@@ -11,7 +12,6 @@ const actionOptions = [
 ];
 
 const ActionNodeModal = ({ actionNode, open, setOpen, updateActionNode }) => {
-  const [label, setLabel] = useState(actionNode ? actionNode.label : "");
   const [action, setAction] = useState(
     actionNode ? (actionNode.isCustom ? "" : actionNode.action) : ""
   );
@@ -35,7 +35,6 @@ const ActionNodeModal = ({ actionNode, open, setOpen, updateActionNode }) => {
 
     setIsCustom(actionNode.isCustom);
     setAction(actionNode.action);
-    setLabel(actionNode.label);
   }, [actionNode]);
 
   const toggleCustom = () => {
@@ -56,14 +55,21 @@ const ActionNodeModal = ({ actionNode, open, setOpen, updateActionNode }) => {
     setOpen(false);
   };
 
+  const onReset = () => {
+    setAction('')
+    setIsCustom(false)
+    setCustomValue('')
+  }
+
   return (
     <NodeModal open={open} setOpen={setOpen} header={"Action Editor"}>
       <div className="flex items-center gap-2 mb-8">
         <p>Action Name: </p>
         <EditViewName
-          value={label}
+          value={actionNode?.label}
           onSave={(newLabel) => {
-            if (newLabel !== label) updateActionNode({ label: newLabel });
+            if (newLabel !== actionNode?.label)
+              updateActionNode({ label: newLabel });
           }}
         />
       </div>
@@ -94,6 +100,7 @@ const ActionNodeModal = ({ actionNode, open, setOpen, updateActionNode }) => {
       </div>
 
       <div className="flex gap-4 mt-14 w-fit ml-auto">
+        <SecondaryButton onClick={onReset}>Reset</SecondaryButton>
         <PrimaryButton onClick={onApply} disabled={!(isDirty() && isValid)}>
           Apply
         </PrimaryButton>

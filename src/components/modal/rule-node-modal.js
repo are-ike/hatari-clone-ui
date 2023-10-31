@@ -12,7 +12,6 @@ const newRow = () => ({
 
 const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
   const [rows, setRows] = useState(ruleNode ? ruleNode.rules : []);
-  const [label, setLabel] = useState(ruleNode ? ruleNode.label : "");
 
   const addNewRow = (idx) => {
     const newRows = JSON.parse(JSON.stringify(rows));
@@ -29,7 +28,6 @@ const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
 
   useEffect(() => {
     if (ruleNode && ruleNode.rules) setRows(ruleNode.rules);
-    if (ruleNode && ruleNode.label) setLabel(ruleNode.label);
   }, [ruleNode]);
 
   const onDelete = (idx) => {
@@ -48,12 +46,6 @@ const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
 
   const onApply = () => {
     updateRuleNode({ rules: rows });
-    setOpen(false);
-  };
-
-  const onClose = () => {
-    setRows([newRow()]);
-    setLabel("");
     setOpen(false);
   };
 
@@ -83,9 +75,10 @@ const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
         <div className="flex items-center gap-2 mb-8 mt-2">
           <p>Rule Name: </p>
           <EditViewName
-            value={label}
+            value={ruleNode?.label}
             onSave={(newLabel) => {
-              if (newLabel !== label) updateRuleNode({ label: newLabel });
+              if (newLabel !== ruleNode?.label)
+                updateRuleNode({ label: newLabel });
             }}
           />
         </div>
