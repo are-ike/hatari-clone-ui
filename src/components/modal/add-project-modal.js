@@ -8,6 +8,7 @@ import projectApis from "../../api/projects";
 import { useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import Toast, { types } from "../toast";
 
 const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
   const { id } = useParams();
@@ -26,7 +27,9 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
       const project = { name: projectName, description: projectDescription };
       if (isEdit) {
         queryClient.invalidateQueries(["project", id]);
-        toast.success("Successfully edited project");
+        toast.success(
+          <Toast type={types.success}>Successfully edited project</Toast>
+        );
         project.id = open.project.id;
       } else {
         toast.success("Successfully created project");
@@ -40,7 +43,9 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
       });
     },
     onError: (e) => {
-      toast.error("An error occured. Try again");
+      toast.error(
+        <Toast type={types.error}>An error occured. Please try again.</Toast>
+      );
     },
   });
 

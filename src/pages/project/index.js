@@ -61,7 +61,7 @@ const Project = () => {
   };
 
   const render = () => {
-    if (showNotFound) return <Redirect to="*" />;
+    if (showNotFound) return <Redirect to='/404' />;
 
     if (getProject.isLoading)
       return (
