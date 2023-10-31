@@ -6,7 +6,7 @@ const SearchBar = ({ query, setQuery, placeholder }) => {
   return (
     <div
       className={cls(
-        "flex gap-2 pl-4 border-none items-center bg-backg rounded duration-300",
+        "flex gap-2 pl-4 border-none items-center bg-backg rounded duration-300 hover:ring-btnHover hover:ring-1",
         isFocused && "ring-btnHover ring-1"
       )}
     >

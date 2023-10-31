@@ -16,7 +16,13 @@ const Config = ({ project }) => {
     isOpen: false,
     project: project ?? {},
   });
+  const [viewMore, setViewMore] = useState(false);
+  const showViewMore = project.description.length > 200;
   const inputRef = useRef();
+  const description =
+    viewMore || !showViewMore
+      ? project.description
+      : `${project.description.slice(0, 200)}...`;
 
   useEffect(() => {
     if (project) setOpenAddModal({ isOpen: false, project });
@@ -61,13 +67,18 @@ const Config = ({ project }) => {
   return (
     <div>
       <AddProjectModal open={openAddModal} setOpen={setOpenAddModal} isEdit />
-      <div className="flex h-[500px] gap-8">
+      <div className="flex items-stretch min-h-[520px] gap-8">
         <div className="rounded-lg bg-white p-8 text-darkblue w-[450px]   ">
           <div className="gap-8 flex flex-col">
             <div className="flex items-start justify-between">
               <div className="">
                 <p className="font-semibold text-sm mb-2">Project Name</p>
-                <p className="text-body">{project.name}</p>
+                <p
+                  className="text-body truncate max-w-[220px]"
+                  title={project.name}
+                >
+                  {project.name}
+                </p>
               </div>
               <button
                 className=""
@@ -91,7 +102,15 @@ const Config = ({ project }) => {
             </div>
             <div>
               <p className="font-semibold text-sm mb-2">Project Description</p>
-              <p className="text-body">{project.description}</p>
+              <p className="text-body">{description}</p>
+              {showViewMore && (
+                <button
+                  onClick={() => setViewMore(!viewMore)}
+                  className="text-primary"
+                >
+                  {!viewMore ? "view more" : "view less"}
+                </button>
+              )}
             </div>
             <div>
               <p className="font-semibold text-sm mb-2">Data Stream Status</p>
@@ -104,7 +123,7 @@ const Config = ({ project }) => {
               <p className="text-body">
                 {format(
                   new Date(project.createdAt),
-                  "dd/MM/yyyy, hh:mm aaaaa'm'"
+                  "dd MMM yyyy, hh:mm aaaaa'm'"
                 )}
               </p>
             </div>

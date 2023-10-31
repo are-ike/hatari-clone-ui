@@ -89,8 +89,8 @@ const Project = () => {
         ) : (
           <>
             <div className="py-4 max-w-page mx-auto">
-              <p className="text-2xl font-medium h-12 flex items-center">
-                Projects Name
+              <p className="text-2xl font-medium h-12 flex items-center ">
+                {getProject.data?.name}
               </p>
             </div>
 

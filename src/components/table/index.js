@@ -23,7 +23,7 @@ const Table = ({ columns, rows, renderRows, className, onRowClick }) => {
         {rows.map((row) => (
           <tr
             key={row.id}
-            className="border-b text-body text-sm font-medium cursor-pointer hover:bg-blueLight/40 duration-300"
+            className="border-b border-[#f1f2f4] text-body text-sm font-medium cursor-pointer hover:bg-blueLight/40 duration-300"
             onClick={() => onRowClick(row)}
           >
             {renderRows(row)}

@@ -22,7 +22,7 @@ const Node = ({ type, data }) => {
             "px-3 py-2 text-xs font-medium text-white rounded-t flex items-center justify-between"
           )}
         >
-          <p className="capitalize">{type}</p>
+          <p className="capitalize font-semibold">{type}</p>
           <div className="flex items-center gap-2">
             {!isInput && (
               <button onClick={() => data.setOpen(true)}>
@@ -32,7 +32,7 @@ const Node = ({ type, data }) => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-3 h-3 text-white"
+                  className="w-4 h-4 text-white"
                 >
                   <path
                     strokeLinecap="round"
@@ -50,7 +50,7 @@ const Node = ({ type, data }) => {
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
                 stroke="currentColor"
-                className="w-3 h-3 text-white "
+                className="w-4 h-4 text-white "
               >
                 <path
                   strokeLinecap="round"
@@ -62,7 +62,7 @@ const Node = ({ type, data }) => {
           </div>
         </div>
         <div className="px-3 py-2.5 h-[65px] rounded-b bg-white">
-          <p className="truncate max-w-full text-sm nodrag">{data.label}</p>
+          <p className="truncate max-w-full text-sm nodrag" title={data.label}>{data.label}</p>
         </div>
       </div>
       {!isAction && <Handle type="source" position={Position.Right} />}

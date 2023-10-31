@@ -42,13 +42,13 @@ const Projects = () => {
   const renderRows = (row) => {
     return (
       <>
-        <td className="p-4" title={row.name}>
-          {/* <span className="truncate max-w-[200px] inline-block "> */}
+        <td className="px-4" title={row.name}>
+          <span className="truncate max-w-[200px] inline-block ">
           {row.name}
-          {/* </span> */}
+          </span>
         </td>
-        <td className="p-4">{format(new Date(row.createdAt), "dd-MM-yyyy")}</td>
-        <td className="p-4">
+        <td className="p-4">{format(new Date(row.createdAt), "dd MMM, yyyy")}</td>
+        <td className="py-2 px-4">
           <Tag type={row.status}>{projectStatuses[row.status]}</Tag>
         </td>
         <td className="flex gap-2 p-4">
@@ -75,7 +75,7 @@ const Projects = () => {
             </svg>
           </button> */}
           <button
-            className="hover:text-[#5E5E72] text-darkgrey"
+            className="hover:text-[#5E5E72] text-darkgrey h-full"
             onClick={(e) => {
               e.stopPropagation();
               setOpenDeleteModal({ id: row.id, isOpen: true, name: row.name });
