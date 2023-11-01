@@ -8,6 +8,7 @@ import { useMutation } from "react-query";
 import projectApis from "../../api/projects";
 import { toast } from "react-toastify";
 import Tag from "../../components/tag";
+import { cls } from "../../utils/functions";
 
 const Config = ({ project }) => {
   const [webhook, setWebhook] = useState(project.webhook);
@@ -102,7 +103,9 @@ const Config = ({ project }) => {
             </div>
             <div>
               <p className="font-semibold text-sm mb-2">Project Description</p>
-              <p className="text-body">{description}</p>
+              <p className={cls(description ? "text-body" : "text-darkgrey")}>
+                {description ? description : "No description"}
+              </p>
               {showViewMore && (
                 <button
                   onClick={() => setViewMore(!viewMore)}

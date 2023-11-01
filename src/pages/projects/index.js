@@ -40,7 +40,6 @@ const Projects = () => {
   useEffect(() => {
     if (!page) setPage(1);
   }, [page]);
-  console.log(page, query);
 
   const getProjects = useQuery({
     queryKey: ["projects", page, query],
@@ -133,40 +132,19 @@ const Projects = () => {
         </div>
       );
 
-    return (
-      <div className="">
-        <AddProjectModal
-          open={openAddModal}
-          setOpen={setOpenAddModal}
-          isEdit={openAddModal.project.id}
-        />
-        <DeleteModal open={openDeleteModal} setOpen={setOpenDeleteModal} />
+    if (getProjects.isSuccess) {
+      return (
+        <div className="">
+          <AddProjectModal
+            open={openAddModal}
+            setOpen={setOpenAddModal}
+            isEdit={openAddModal.project.id}
+          />
+          <DeleteModal open={openDeleteModal} setOpen={setOpenDeleteModal} />
 
-        <div className="py-4 max-w-page mx-auto flex justify-between items-center">
-          <p className="text-2xl font-medium">Projects</p>
-          <PrimaryButton
-            onClick={() =>
-              setOpenAddModal({
-                isOpen: true,
-                project: {
-                  id: null,
-                  name: "",
-                  description: "",
-                },
-              })
-            }
-          >
-            Create Project
-          </PrimaryButton>
-        </div>
-
-        <div className="bg-backg py-8 h-[calc(100vh-142px)] overflow-y-auto">
-          {!getProjects.data?.projects?.length && !query && page == 1 ? (
-            <EmptyContainer
-              text={
-                "You haven’t created any projects yet. When you do, it’ll show up here."
-              }
-              buttonText={"Create Project"}
+          <div className="py-4 max-w-page mx-auto flex justify-between items-center">
+            <p className="text-2xl font-medium">Projects</p>
+            <PrimaryButton
               onClick={() =>
                 setOpenAddModal({
                   isOpen: true,
@@ -177,54 +155,77 @@ const Projects = () => {
                   },
                 })
               }
-            />
-          ) : (
-            <div className="max-w-page mx-auto">
-              <div className="py-6 px-10 bg-white rounded-lg">
-                <SearchBar
-                  placeholder={"Search projects"}
-                  query={query}
-                  setQuery={setQuery}
-                />
-                {!!getProjects.data?.projects?.length ? (
-                  <Table
-                    columns={columns}
-                    rows={getProjects.data?.projects}
-                    renderRows={renderRows}
-                    className="mt-4"
-                    onRowClick={(row) =>
-                      history.push(`/projects/${row.id}/events`)
-                    }
-                    isLoading={getProjects.isFetching}
+            >
+              Create Project
+            </PrimaryButton>
+          </div>
+
+          <div className="bg-backg py-8 h-[calc(100vh-142px)] overflow-y-auto">
+            {!getProjects.data?.hasProjects ? (
+              <EmptyContainer
+                text={
+                  "You haven’t created any projects yet. When you do, it’ll show up here."
+                }
+                buttonText={"Create Project"}
+                onClick={() =>
+                  setOpenAddModal({
+                    isOpen: true,
+                    project: {
+                      id: null,
+                      name: "",
+                      description: "",
+                    },
+                  })
+                }
+              />
+            ) : (
+              <div className="max-w-page mx-auto">
+                <div className="py-6 px-10 bg-white rounded-lg">
+                  <SearchBar
+                    placeholder={"Search projects"}
+                    query={query}
+                    setQuery={setQuery}
                   />
-                ) : (
-                  <p className="text-darkgrey font-medium my-8 text-center">
-                    No projects found
-                  </p>
+                  {!!getProjects.data?.projects?.length ? (
+                    <Table
+                      columns={columns}
+                      rows={getProjects.data?.projects}
+                      renderRows={renderRows}
+                      className="mt-4"
+                      onRowClick={(row) =>
+                        history.push(`/projects/${row.id}/events`)
+                      }
+                      isLoading={getProjects.isFetching}
+                    />
+                  ) : (
+                    <p className="text-darkgrey font-medium my-8 text-center">
+                      No projects found
+                    </p>
+                  )}
+                </div>
+
+                {!!getProjects.data?.projects?.length && (
+                  <ReactPaginate
+                    className="flex p-2 bg-white w-fit rounded mt-4 ml-auto items-center"
+                    pageLinkClassName="h-8 w-8 text-body flex items-center justify-center hover:bg-primary hover:text-white rounded"
+                    nextLabel={"Next >"}
+                    forcePage={page - 1}
+                    onPageChange={(e) => setPage(e.selected + 1)}
+                    pageRangeDisplayed={5}
+                    pageCount={getProjects.data?.totalPages}
+                    previousLabel={"< Previous"}
+                    previousLinkClassName="mr-2"
+                    nextLinkClassName="ml-2"
+                    disabledLinkClassName="text-darkgrey cursor-not-allowed"
+                    activeLinkClassName="bg-primary text-white"
+                  />
                 )}
               </div>
-
-              {!!getProjects.data?.projects?.length && (
-                <ReactPaginate
-                  className="flex p-2 bg-white w-fit rounded mt-4 ml-auto items-center"
-                  pageLinkClassName="h-8 w-8 text-body flex items-center justify-center hover:bg-primary hover:text-white rounded"
-                  nextLabel={"Next >"}
-                  forcePage={page - 1}
-                  onPageChange={(e) => setPage(e.selected + 1)}
-                  pageRangeDisplayed={5}
-                  pageCount={getProjects.data?.totalPages}
-                  previousLabel={"< Previous"}
-                  previousLinkClassName="mr-2"
-                  nextLinkClassName="ml-2"
-                  disabledLinkClassName="text-darkgrey cursor-not-allowed"
-                  activeLinkClassName="bg-primary text-white"
-                />
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
   };
 
   return render();
