@@ -10,7 +10,13 @@ const Node = ({ type, data }) => {
 
   return (
     <>
-      {!isInput && <Handle type="target" position={Position.Left} />}
+      {!isInput && (
+        <Handle
+          type="target"
+          position={Position.Left}
+          style={{ background: "#1343C7", border: "#1343C7" }}
+        />
+      )}
       <div className="border rounded w-[195px]">
         <div
           className={cls(
@@ -62,10 +68,18 @@ const Node = ({ type, data }) => {
           </div>
         </div>
         <div className="px-3 py-2.5 h-[65px] rounded-b bg-white">
-          <p className="truncate max-w-full text-sm nodrag" title={data.label}>{data.label}</p>
+          <p className="truncate max-w-full text-sm nodrag" title={data.label}>
+            {data.label}
+          </p>
         </div>
       </div>
-      {!isAction && <Handle type="source" position={Position.Right} />}
+      {!isAction && (
+        <Handle
+          type="source"
+          position={Position.Right}
+          style={{ background: "#1343C7", border: "#1343C7" }}
+        />
+      )}
     </>
   );
 };

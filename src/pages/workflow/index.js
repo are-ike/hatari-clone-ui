@@ -11,6 +11,7 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   addEdge,
+  MarkerType,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import ActionNode from "../../components/nodes/action-node";
@@ -81,7 +82,19 @@ const Workflow = ({ project }) => {
       if (sourceNode === "inputNode" && targetNode === nodeValues.action)
         return alert("non");
 
-      return setEdges((eds) => addEdge(params, eds));
+      const updatedParams = { ...params };
+      updatedParams.markerEnd = {
+        type: MarkerType.ArrowClosed,
+        color: "#1343C7",
+        width: 18,
+        height: 18,
+        strokeWidth: 3.5,
+      };
+
+      updatedParams.style = { stroke: "#1343C7" };
+      updatedParams.animated = true;
+
+      return setEdges((eds) => addEdge(updatedParams, eds));
     },
 
     [setEdges, nodes]
@@ -172,7 +185,7 @@ const Workflow = ({ project }) => {
   //     });
   //   }
   // }, [isDirty, canLeave]);
-
+  console.log(onEdgesChange);
   const createNode = (e, type) => {
     const node = {
       id: type,
