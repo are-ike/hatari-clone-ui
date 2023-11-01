@@ -96,7 +96,7 @@ const Project = () => {
               key={tab.tabId}
               to={`/projects/${id}/${tab.tabId}`}
               className={cls(
-                "py-3 font-medium duration-300 !border-b-2",
+                "py-3 font-medium duration-300 !border-b-2 hover:text-primary",
                 pathname === `/projects/${id}/${tab.tabId}`
                   ? "text-primary border-primary "
                   : "text-darkgrey border-transparent"

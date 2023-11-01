@@ -207,15 +207,15 @@ const Projects = () => {
                 {!!getProjects.data?.projects?.length && (
                   <ReactPaginate
                     className="flex p-2 bg-white w-fit rounded mt-4 ml-auto items-center"
-                    pageLinkClassName="h-8 w-8 text-body flex items-center justify-center hover:bg-primary hover:text-white rounded"
+                    pageLinkClassName="h-8 w-8 text-body text-sm flex items-center justify-center hover:bg-primary hover:text-white rounded"
                     nextLabel={"Next >"}
                     forcePage={page - 1}
                     onPageChange={(e) => setPage(e.selected + 1)}
                     pageRangeDisplayed={5}
                     pageCount={getProjects.data?.totalPages}
                     previousLabel={"< Previous"}
-                    previousLinkClassName="mr-2"
-                    nextLinkClassName="ml-2"
+                    previousLinkClassName="mr-2 text-sm"
+                    nextLinkClassName="ml-2 text-sm"
                     disabledLinkClassName="text-darkgrey cursor-not-allowed"
                     activeLinkClassName="bg-primary text-white"
                   />
