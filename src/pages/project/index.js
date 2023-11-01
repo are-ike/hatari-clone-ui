@@ -84,37 +84,43 @@ const Project = () => {
 
     return (
       <div>
-        {tab === tabIds.workflow ? (
-          renderComponent()
-        ) : (
-          <>
-            <div className="py-4 max-w-page mx-auto">
-              <p className="text-2xl font-medium h-12 flex items-center ">
-                {getProject.data?.name}
-              </p>
-            </div>
+        <div className="py-4 max-w-page mx-auto">
+          <p className="text-2xl font-medium h-12 flex items-center ">
+            {getProject.data?.name}
+          </p>
+        </div>
 
-            <div className="flex gap-4 max-w-page mx-auto">
-              {tabs.map((tab) => (
-                <Link
-                  key={tab.tabId}
-                  to={`/projects/${id}/${tab.tabId}`}
-                  className={cls(
-                    "py-3 font-medium duration-300 !border-b-2",
-                    pathname === `/projects/${id}/${tab.tabId}`
-                      ? "text-primary border-primary "
-                      : "text-darkgrey border-transparent"
-                  )}
-                >
-                  {tab.name}
-                </Link>
-              ))}
-            </div>
-            <div className="bg-backg py-8 h-[calc(100vh-192px)] overflow-y-auto">
-              <div className="max-w-page mx-auto">{renderComponent()}</div>
-            </div>
-          </>
-        )}
+        <div className="flex gap-4 max-w-page mx-auto">
+          {tabs.map((tab) => (
+            <Link
+              key={tab.tabId}
+              to={`/projects/${id}/${tab.tabId}`}
+              className={cls(
+                "py-3 font-medium duration-300 !border-b-2",
+                pathname === `/projects/${id}/${tab.tabId}`
+                  ? "text-primary border-primary "
+                  : "text-darkgrey border-transparent"
+              )}
+            >
+              {tab.name}
+            </Link>
+          ))}
+        </div>
+
+        <div
+          className={cls(
+            tab !== tabIds.workflow &&
+              "bg-backg py-8 h-[calc(100vh-192px)] overflow-y-auto"
+          )}
+        >
+          <div
+            className={cls(
+              tab !== tabIds.workflow ? "max-w-page mx-auto" : "relative"
+            )}
+          >
+            {renderComponent()}
+          </div>
+        </div>
       </div>
     );
   };

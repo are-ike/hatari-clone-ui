@@ -12,6 +12,8 @@ import ReactFlow, {
   useEdgesState,
   addEdge,
   MarkerType,
+  useReactFlow,
+  ReactFlowProvider,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import ActionNode from "../../components/nodes/action-node";
@@ -38,6 +40,14 @@ const nodeTypes = {
   rule: RuleNode,
 };
 
+const WorkflowWrapper = ({ project }) => {
+  return (
+    <ReactFlowProvider>
+      <Workflow project={project} />
+    </ReactFlowProvider>
+  );
+};
+
 const Workflow = ({ project }) => {
   const history = useHistory();
   const [canLeave, setCanLeave] = useState(false);
@@ -56,6 +66,8 @@ const Workflow = ({ project }) => {
     project.nodes ? transformApiData(project.nodes).edges : []
   );
 
+  const canvasContainer = useRef();
+  const reactFlowInstance = useReactFlow();
   const setWorkflow = (nodes, edges) => {
     setNodes(nodes);
     setEdges(edges);
@@ -63,7 +75,6 @@ const Workflow = ({ project }) => {
 
   const { undo, redo, canRedo, canUndo, push, block } = useUndo(setWorkflow);
 
-  //console.log(nodes);
   const updateProject = useMutation({
     mutationFn: projectApis.updateProject,
     onSuccess: () => {
@@ -92,7 +103,6 @@ const Workflow = ({ project }) => {
       };
 
       updatedParams.style = { stroke: "#1343C7" };
-      updatedParams.animated = true;
 
       return setEdges((eds) => addEdge(updatedParams, eds));
     },
@@ -185,11 +195,18 @@ const Workflow = ({ project }) => {
   //     });
   //   }
   // }, [isDirty, canLeave]);
-  console.log(onEdgesChange);
+
   const createNode = (e, type) => {
+    const reactFlowBounds = canvasContainer.current.getBoundingClientRect();
+
+    const position = reactFlowInstance.project({
+      x: e.clientX - reactFlowBounds.left,
+      y: e.clientY - reactFlowBounds.top,
+    });
+
     const node = {
       id: type,
-      position: { x: e.pageX - 130, y: e.pageY - 130 },
+      position,
       data: {
         label: type !== "inputNode" ? "Untitled" : project.name,
         //open: type === nodeValues.rule ? openRuleNode : openActionNode, --not needed
@@ -307,13 +324,14 @@ const Workflow = ({ project }) => {
       />
 
       <div
-        className="bg-[#F6F6F8] h-[calc(100vh-142px)] w-screen overflow-hidden"
+        className="bg-[#F6F6F8] h-[calc(100vh-192px)] w-screen overflow-hidden"
         onDrop={onDrop}
         onDragOver={(e) => {
           if (draggableCard.isDragging) {
             e.preventDefault();
           }
         }}
+        ref={canvasContainer}
       >
         <ReactFlow
           nodeTypes={nodeTypes}
@@ -327,13 +345,16 @@ const Workflow = ({ project }) => {
           }}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          connectionLineStyle={{
+            stroke: "#1343C7",
+          }}
         >
           <Controls />
           <Background variant="dots" gap={12} size={1} />
         </ReactFlow>
       </div>
-    </div>
+      </div>
   );
 };
 
-export default Workflow;
+export default WorkflowWrapper;
