@@ -4,19 +4,9 @@ import Dropdown from "../dropdown";
 import { conditions, ruleFields, ruleOperators } from "../../constants";
 import { cls } from "../../utils/functions";
 
-const fieldOptions = [
-  { label: "payment", value: "payment" },
-  { label: "payment", value: "payment" },
-  { label: "payment", value: "payment" },
-];
-const operatorOptions = [
-  { label: "payment", value: "payment" },
-  { label: "payment", value: "payment" },
-  { label: "payment", value: "payment" },
-];
-
 const RuleRow = ({
   canDelete = true,
+  parent,
   field,
   operator,
   value,
@@ -65,11 +55,16 @@ const RuleRow = ({
         <Dropdown
           options={ruleFields}
           value={
-            ruleFields.filter((option) => option.value === field)[0] ?? null
+            ruleFields
+              .filter((option) => option.label === parent)[0]
+              ?.options.filter((opt) => opt.value === field)[0] ?? null
           }
-          setValue={(option) =>
-            updateRow({ key: "field", value: option.value })
-          }
+          setValue={(option) => {
+            updateRow({
+              key: ["field", "parent"],
+              value: [option.value, option.parent],
+            });
+          }}
           placeholder={"Field"}
         />
         <Dropdown

@@ -57,14 +57,14 @@ const Events = ({ project }) => {
   const render = () => {
     if (getEvents.isLoading)
       return (
-        <div className="flex items-center justify-center h-[calc(100vh-130px)]">
+        <div className="flex items-center justify-center h-[calc(100vh-256px)]">
           <img src={loader} alt="" width={40} height={40} />
         </div>
       );
 
     if (getEvents.isError)
       return (
-        <div className="flex items-center justify-center h-[calc(100vh-130px)]">
+        <div className="flex items-center justify-center h-[calc(100vh-256px)]">
           <ErrorMessage
             message={
               "An error occured while fetching events. Please try again."

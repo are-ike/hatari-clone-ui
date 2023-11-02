@@ -54,7 +54,16 @@ const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
     ({ key, value }) => {
       const newRows = JSON.parse(JSON.stringify(rows));
       const row = newRows[idx];
-      row[key] = value;
+
+      if(Array.isArray(key) && Array.isArray(value)){
+        key.forEach((k, i) => {
+          row[k] = value[i];
+        })
+      }else{
+        row[key] = value;
+
+      }
+      //const row = newRows[idx];
 
       setRows(newRows);
     };
@@ -88,6 +97,7 @@ const RuleNodeModal = ({ ruleNode, open, setOpen, updateRuleNode }) => {
             <RuleRow
               key={"rule-row" + idx}
               field={row.field}
+              parent={row.parent}
               operator={row.operator}
               value={row.value}
               condition={row.condition}

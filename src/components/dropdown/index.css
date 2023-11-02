@@ -1,0 +1,12 @@
+ .open .down{
+    transform: rotate(180deg);
+ }
+
+.options{
+    height: 0;
+    overflow: hidden;
+}
+.options-open{
+    height: auto;
+    overflow: visible;
+}
