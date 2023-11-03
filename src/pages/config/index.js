@@ -142,11 +142,11 @@ const Config = ({ project }) => {
               <SecondaryButton
                 className={"flex items-center gap-2"}
                 onClick={() => {
-                  if (!project.project_url) return alert("workflow");
+                  
                   navigator.clipboard
-                    .writeText("hiiiii")
-                    .then(() => alert("yh"))
-                    .catch(() => alert("no"));
+                    .writeText(project.project_url)
+                    .then(() => toast.success("Copied"))
+                    .catch(() => toast.error("Unable to copy. Please try again"));
                 }}
               >
                 <svg

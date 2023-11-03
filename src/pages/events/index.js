@@ -21,6 +21,17 @@ const Events = ({ project }) => {
     if (!page) setPage(1);
   }, [page]);
 
+
+
+  const formatAmount = (amount, currency) => {
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency,
+    });
+
+    return formatter.format(amount)
+  }
+
   const getEvents = useQuery({
     queryKey: ["events", page],
     queryFn: () => eventApis.getEvents({ page, projectId: project.id }),
@@ -31,23 +42,27 @@ const Events = ({ project }) => {
   const renderRows = (row) => {
     return (
       <>
-        <td className="px-4">{row.transactionId}</td>
+        <td className="px-4">
+          <span className="truncate max-w-[200px] inline-block ">
+            {row.transaction_id}
+          </span>
+        </td>
         <td className="p-4">
           {format(new Date(row.createdAt), "dd MMM, yyyy")}
         </td>
-        <td className="py-2 px-4">
+        <td className="px-4">
           <span className="truncate max-w-[200px] inline-block ">
             {row.user}
           </span>
         </td>
-        <td className="flex gap-1 px-4 items-center h-[52px]">
+        <td className="px-4">
           <span className="truncate max-w-[200px] inline-block ">
             {row.gateway}
           </span>
         </td>
-        <td className="flex gap-1 px-4 items-center h-[52px]">
+        <td className="px-4">
           <span className="truncate max-w-[200px] inline-block ">
-            {row.amount}
+            {formatAmount(row.amount, row.currency)}
           </span>
         </td>
       </>
@@ -76,23 +91,25 @@ const Events = ({ project }) => {
 
     if (getEvents.isSuccess) {
       return (
-        <div className="">
-          {!!getEvents.data?.events?.length ? (
-            <Table
-              columns={columns}
-              rows={getEvents.data?.events}
-              renderRows={renderRows}
-              className="mt-4"
-              onRowClick={(row) =>
-                setOpenEventModal({ isOpen: true, eventId: row.id })
-              }
-              isLoading={getEvents.isFetching}
-            />
-          ) : (
-            <p className="text-darkgrey font-medium my-8 text-center">
-              No events found
-            </p>
-          )}
+        <div>
+          <div className="py-6 px-10 bg-white rounded-lg">
+            {!!getEvents.data?.events?.length ? (
+              <Table
+                columns={columns}
+                rows={getEvents.data?.events}
+                renderRows={renderRows}
+                className="mt-4"
+                onRowClick={(row) =>
+                  setOpenEventModal({ isOpen: true, eventId: row.id })
+                }
+                isLoading={getEvents.isFetching}
+              />
+            ) : (
+              <p className="text-darkgrey font-medium my-8 text-center">
+                No events found
+              </p>
+            )}
+          </div>
 
           {!!getEvents.data?.events?.length && (
             <ReactPaginate
@@ -104,8 +121,8 @@ const Events = ({ project }) => {
               pageRangeDisplayed={5}
               pageCount={getEvents.data?.totalPages}
               previousLabel={"< Previous"}
-              previousLinkClassName="mr-2"
-              nextLinkClassName="ml-2"
+              previousLinkClassName="mr-2 text-sm"
+              nextLinkClassName="ml-2 text-sm"
               disabledLinkClassName="text-darkgrey cursor-not-allowed"
               activeLinkClassName="bg-primary text-white"
             />
