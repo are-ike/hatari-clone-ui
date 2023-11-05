@@ -7,6 +7,7 @@ import ErrorMessage from "../../components/error-message";
 import { format } from "date-fns";
 import ReactPaginate from "react-paginate";
 import Table from "../../components/table";
+import EventModal from "../../components/modal/event-modal";
 
 const columns = ["transaction ID", "created on", "user", "gateway", "amount"];
 
@@ -14,23 +15,21 @@ const Events = ({ project }) => {
   const [page, setPage] = useSetParams("page");
   const [openEventModal, setOpenEventModal] = useState({
     isOpen: false,
-    eventId: null,
+    event: null,
   });
 
   useEffect(() => {
     if (!page) setPage(1);
   }, [page]);
 
-
-
   const formatAmount = (amount, currency) => {
-    const formatter = new Intl.NumberFormat('en-US', {
-      style: 'currency',
+    const formatter = new Intl.NumberFormat("en-US", {
+      style: "currency",
       currency: currency,
     });
 
-    return formatter.format(amount)
-  }
+    return formatter.format(amount);
+  };
 
   const getEvents = useQuery({
     queryKey: ["events", page],
@@ -92,6 +91,7 @@ const Events = ({ project }) => {
     if (getEvents.isSuccess) {
       return (
         <div>
+          <EventModal open={openEventModal} setOpen={setOpenEventModal} />
           <div className="py-6 px-10 bg-white rounded-lg">
             {!!getEvents.data?.events?.length ? (
               <Table
@@ -100,7 +100,7 @@ const Events = ({ project }) => {
                 renderRows={renderRows}
                 className="mt-4"
                 onRowClick={(row) =>
-                  setOpenEventModal({ isOpen: true, eventId: row.id })
+                  setOpenEventModal({ isOpen: true, event: row })
                 }
                 isLoading={getEvents.isFetching}
               />
