@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:8000/projects";
+const baseUrl = process.env.BASE_URL + '/projects';
 
 const getProjects = async ({ page, query }) => {
   try {
