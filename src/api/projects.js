@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseUrl = process.env.URL + '/projects';
+const baseUrl = 'https://hatari-clone.onrender.com/projects';
 
 const getProjects = async ({ page, query }) => {
   try {
