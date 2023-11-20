@@ -84,33 +84,35 @@ const Project = () => {
 
     return (
       <div>
-        <div className="py-4 max-w-page mx-auto">
-          <p className="text-2xl font-medium h-12 flex items-center ">
-            {getProject.data?.name}
-          </p>
-        </div>
+        <div className="px-8">
+          <div className="py-4 max-w-page mx-auto">
+            <p className="text-2xl font-medium h-12 flex items-center ">
+              {getProject.data?.name}
+            </p>
+          </div>
 
-        <div className="flex gap-4 max-w-page mx-auto">
-          {tabs.map((tab) => (
-            <Link
-              key={tab.tabId}
-              to={`/projects/${id}/${tab.tabId}`}
-              className={cls(
-                "py-3 font-medium duration-300 !border-b-2 hover:text-primary",
-                pathname === `/projects/${id}/${tab.tabId}`
-                  ? "text-primary border-primary "
-                  : "text-darkgrey border-transparent"
-              )}
-            >
-              {tab.name}
-            </Link>
-          ))}
+          <div className="flex gap-4 max-w-page mx-auto">
+            {tabs.map((tab) => (
+              <Link
+                key={tab.tabId}
+                to={`/projects/${id}/${tab.tabId}`}
+                className={cls(
+                  "py-3 font-medium duration-300 !border-b-2 hover:text-primary",
+                  pathname === `/projects/${id}/${tab.tabId}`
+                    ? "text-primary border-primary "
+                    : "text-darkgrey border-transparent"
+                )}
+              >
+                {tab.name}
+              </Link>
+            ))}
+          </div>
         </div>
 
         <div
           className={cls(
             tab !== tabIds.workflow &&
-              "bg-backg py-8 h-[calc(100vh-192px)] overflow-y-auto"
+              "bg-backg p-8 h-[calc(100vh-192px)] overflow-y-auto"
           )}
         >
           <div

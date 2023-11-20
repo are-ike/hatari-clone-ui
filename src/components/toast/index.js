@@ -10,14 +10,14 @@ export const types = {
 const Toast = ({ children, type }) => {
   return (
     <div
-      className={cls(
-        " border-l-2",
-        type === types.warn
-          ? "border-[#F8CB2E]"
-          : type === types.error
-          ? "border-del"
-          : "border-green"
-      )}
+      // className={cls(
+      //   " border-l-2",
+      //   type === types.warn
+      //     ? "border-[#F8CB2E]"
+      //     : type === types.error
+      //     ? "border-del"
+      //     : "border-green"
+      // )}
     >
       {children}
     </div>

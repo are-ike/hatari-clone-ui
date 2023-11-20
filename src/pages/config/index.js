@@ -9,6 +9,7 @@ import projectApis from "../../api/projects";
 import { toast } from "react-toastify";
 import Tag from "../../components/tag";
 import { cls } from "../../utils/functions";
+import { queryClient } from "../../App";
 
 const Config = ({ project }) => {
   const [webhook, setWebhook] = useState(project.webhook);

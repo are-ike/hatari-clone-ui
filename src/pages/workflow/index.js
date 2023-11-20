@@ -32,7 +32,7 @@ import projectApis from "../../api/projects";
 import { toast } from "react-toastify";
 import useUndo from "../../hooks/useUndo";
 import { useHistory } from "react-router-dom";
-import SecondaryButton from "../../components/button/secondary-button";
+import { queryClient } from "../../App";
 
 const nodeTypes = {
   action: ActionNode,
@@ -50,7 +50,6 @@ const WorkflowWrapper = ({ project }) => {
 
 const Workflow = ({ project }) => {
   const history = useHistory();
-  const [canLeave, setCanLeave] = useState(false);
   const [draggableCard, setDraggableCard] = useState({
     isDragging: false,
     isDropped: false,
@@ -77,8 +76,15 @@ const Workflow = ({ project }) => {
 
   const updateProject = useMutation({
     mutationFn: projectApis.updateProject,
-    onSuccess: () => {
+    onSuccess: (_, {data: d}) => {
       toast.success("Saved");
+      queryClient.setQueryData(["project", project.id], data => {
+        const newData = {...data, nodes:d.nodes }
+        console.log(data, newData);
+        return newData
+
+      })
+
     },
     onError: () => toast.error("Unable to save workflow. Try again"),
   });
@@ -157,44 +163,41 @@ const Workflow = ({ project }) => {
         { nodes, edges },
         true
       );
-    return true;
+
+    return false;
   }, [project, nodes, edges]);
 
   useEffect(() => {
     push({ nodes, edges });
   }, [nodes, edges]);
 
-  // useEffect(() => {
-  //   if (isDirty) {
-  //     window.onbeforeunload = () => true;
-  //   } else {
-  //     window.onbeforeunload = undefined;
-  //   }
-  // }, [isDirty]);
+  useEffect(() => {
+    if (isDirty) {
+      window.onbeforeunload = () => true;
+    } else {
+      window.onbeforeunload = undefined;
+    }
+  }, [isDirty]);
 
-  // useEffect(() => {
-  //   if (isDirty && !canLeave) {
-  //     history.block((location) => {
-  //       toast.dismiss();
-  //       toast.warn(
-  //         <div>
-  //           <span>"Your changes have not been saved"</span>
-  //           <SecondaryButton
-  //             className={"px-3 h-8 text-sm"}
-  //             onClick={(e) => {
-  //               setCanLeave(true);
-  //               e.stopPropagation();
-  //               history.push(location.pathname);
-  //             }}
-  //           >
-  //             Leave
-  //           </SecondaryButton>
-  //         </div>
-  //       );
-  //       return false;
-  //     });
-  //   }
-  // }, [isDirty, canLeave]);
+  useEffect(() => {
+    let unblock;
+    if (isDirty) {
+      unblock = history.block(() => {
+        if (
+          window.confirm(
+            "You have unsaved changes, are you sure you want to leave?"
+          )
+        ) {
+          return true;
+        }
+        return false;
+      });
+    }
+
+    return () => {
+      unblock && unblock();
+    };
+  }, [isDirty]);
 
   const createNode = (e, type) => {
     const reactFlowBounds = canvasContainer.current.getBoundingClientRect();
@@ -244,6 +247,12 @@ const Workflow = ({ project }) => {
       type: null,
     });
   };
+
+  const onNodeDragStart = useCallback(() => block(true, true), [block]);
+  const onNodeDragStop = useCallback(() => {
+    block(false);
+    push({ nodes, edges });
+  }, [block, push, nodes, edges]);
 
   const updateRuleNode = ({ label = null, rules = null }) => {
     setNodes((nodes) => {
@@ -338,11 +347,8 @@ const Workflow = ({ project }) => {
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
-          onNodeDragStart={() => block(true, true)}
-          onNodeDragStop={() => {
-            block(false);
-            push({ nodes, edges });
-          }}
+          onNodeDragStart={onNodeDragStart}
+          onNodeDragStop={onNodeDragStop}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           connectionLineStyle={{
@@ -353,7 +359,7 @@ const Workflow = ({ project }) => {
           <Background variant="dots" gap={12} size={1} />
         </ReactFlow>
       </div>
-      </div>
+    </div>
   );
 };
 

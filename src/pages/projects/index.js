@@ -141,26 +141,27 @@ const Projects = () => {
             isEdit={openAddModal.project.id}
           />
           <DeleteModal open={openDeleteModal} setOpen={setOpenDeleteModal} />
-
-          <div className="py-4 max-w-page mx-auto flex justify-between items-center">
-            <p className="text-2xl font-medium">Projects</p>
-            <PrimaryButton
-              onClick={() =>
-                setOpenAddModal({
-                  isOpen: true,
-                  project: {
-                    id: null,
-                    name: "",
-                    description: "",
-                  },
-                })
-              }
-            >
-              Create Project
-            </PrimaryButton>
+          <div className="px-8">
+            <div className="py-4 max-w-page mx-auto flex justify-between items-center ">
+              <p className="text-2xl font-medium">Projects</p>
+              <PrimaryButton
+                onClick={() =>
+                  setOpenAddModal({
+                    isOpen: true,
+                    project: {
+                      id: null,
+                      name: "",
+                      description: "",
+                    },
+                  })
+                }
+              >
+                Create Project
+              </PrimaryButton>
+            </div>
           </div>
 
-          <div className="bg-backg py-8 h-[calc(100vh-142px)] overflow-y-auto">
+          <div className="bg-backg p-8 h-[calc(100vh-142px)] overflow-y-auto">
             {!getProjects.data?.hasProjects ? (
               <EmptyContainer
                 text={

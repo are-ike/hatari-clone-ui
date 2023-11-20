@@ -5,12 +5,13 @@ import Textarea from "../input/textarea";
 import PrimaryButton from "../button/primary-button";
 import { useMutation } from "react-query";
 import projectApis from "../../api/projects";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import Toast, { types } from "../toast";
 
 const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
+  const history = useHistory()
   const { id } = useParams();
   const [projectName, setProjectName] = useState(
     isEdit ? open.project.name : ""
@@ -23,7 +24,7 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
   const queryClient = useQueryClient();
   const createUpdateProject = useMutation({
     mutationFn: isEdit ? projectApis.updateProject : projectApis.createProject,
-    onSuccess: () => {
+    onSuccess: (data) => {
       const project = { name: projectName, description: projectDescription };
       if (isEdit) {
         queryClient.invalidateQueries(["project", id]);
@@ -31,9 +32,10 @@ const AddProjectModal = ({ open, setOpen, isEdit = false }) => {
           <Toast type={types.success}>Successfully edited project</Toast>
         );
         project.id = open.project.id;
+        queryClient.invalidateQueries();
       } else {
         toast.success("Successfully created project");
-        queryClient.invalidateQueries(["projects"]);
+        history.push(`/projects/${data.project.id}`)
         project.id = null;
       }
 
